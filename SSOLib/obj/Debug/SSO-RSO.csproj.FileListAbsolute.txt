@@ -1,0 +1,5 @@
+C:\Code\hacks\Hobbes\ClassLibrary1\obj\Debug\SSO-RSO.csprojResolveAssemblyReference.cache
+C:\Code\hacks\Hobbes\ClassLibrary1\bin\Debug\ClassLibrary1.dll
+C:\Code\hacks\Hobbes\ClassLibrary1\bin\Debug\ClassLibrary1.pdb
+C:\Code\hacks\Hobbes\ClassLibrary1\obj\Debug\ClassLibrary1.dll
+C:\Code\hacks\Hobbes\ClassLibrary1\obj\Debug\ClassLibrary1.pdb

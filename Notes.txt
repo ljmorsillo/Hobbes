@@ -1,0 +1,4 @@
+﻿ <authentication mode="Forms"> Current User is: , System.Security.Principal.GenericIdentity
+ <authentication mode="Windows"> Current User is: , System.Security.Principal.WindowsIdentity
+
+ 
