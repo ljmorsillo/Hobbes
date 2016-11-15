@@ -13,9 +13,7 @@
                 ASP.NET. If you have any questions about ASP.NET visit 
                 <a href="http://forums.asp.net/18.aspx" title="ASP.NET Forum">our forums</a>.
             </p>
-            <h2>Current User is: </h2> Current User is: <%: User.Identity.Name %>, Type:<%: User.Identity.ToString() %>, Current: <%:System.Security.Principal.WindowsIdentity.GetCurrent().Name %> ,
-            Authenticated?: <%:System.Security.Principal.WindowsIdentity.GetCurrent().IsAuthenticated%>, Context.User.Identity: <%:Context.User.Identity.Name %>, Auth mode (GetSection): <%:Context.GetSection("authentication") %>
-
+            <h2>Cookies:</h2> <%: DumpCookies() %>
         </div>
     </section>
 </asp:Content>

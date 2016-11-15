@@ -22,9 +22,31 @@ namespace ircda.hobbes.Tests
         public void MakeCookieTest()
         {
             HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName,testCookieValue);
+
             Assert.IsNotNull(testCookie, "Cookie is null");
-            Assert.AreEqual(CookieTools.IRCDACookieName, HttpUtility.HtmlDecode(testCookie.Name), "Problem: Cookie value wrong");
-            Assert.AreEqual(testCookieValue, HttpUtility.HtmlDecode(testCookie.Value));
+            Assert.AreEqual(CookieTools.IRCDACookieName, HttpUtility.HtmlDecode(testCookie.Name), "Problem: Cookie name wrong");
+            Assert.AreEqual(testCookieValue, HttpUtility.HtmlDecode(testCookie.Value), "Problem: Cookie value wrong");
+
+            testCookie = null;
+            //Test creating a cookie with no initial value
+            testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, null);
+            Assert.IsNotNull(testCookie, "Cookie is null");
+            Assert.AreEqual(CookieTools.IRCDACookieName, HttpUtility.HtmlDecode(testCookie.Name), "Problem: Cookie name wrong");
+            Assert.IsNull(testCookie.Value, "Problem: Cookie value wrong");
+
+        }
+        [TestMethod()]
+        public void AddToCookieTest()
+        {
+            HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, testCookieValue);
+            CookieTools.AddTo(testCookie, "TestagainKey", "TestAgainValue");
+            Assert.IsNotNull(testCookie, "Cookie is null");
+            Assert.AreEqual(CookieTools.IRCDACookieName, HttpUtility.HtmlDecode(testCookie.Name), "Problem: Cookie name wrong");
+            Assert.AreEqual("TestAgainValue", HttpUtility.HtmlDecode(testCookie.Values["TestagainKey"]), "Problem: Cookie with subkey");
+            Assert.AreEqual(testCookieValue, testCookie.Values[0], "Problem: Cookie with subkey");
+            CookieTools.AddTo(testCookie, "TestagainKey", "TestAgainValue");
+            Assert.IsTrue(testCookie.Values.Count < 3, "Problem: Subkey count: "+ testCookie.Values.Count);
+
         }
     }
 }

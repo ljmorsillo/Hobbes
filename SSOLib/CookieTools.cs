@@ -42,7 +42,7 @@ namespace ircda.hobbes
             if (!string.IsNullOrEmpty(cookieName))
             {
                 retCookie = new HttpCookie(cookieName);
-                retCookie.Expires = DateTime.Now.AddDays(1);
+                retCookie.Expires = DateTime.Now.AddDays(1); //$$$ make this configurable
                 if (!string.IsNullOrEmpty(value))
                 {
                     retCookie.Value = HttpUtility.HtmlEncode(value);
@@ -50,15 +50,13 @@ namespace ircda.hobbes
             }
             return retCookie;
         }
-        public static HttpCookieCollection MakeCookies(HttpCookie cookie)
+
+        public static HttpCookie AddTo(HttpCookie cookie, string key, string value)
         {
-            HttpCookieCollection retCookies = null;
-            if (cookie != null && cookie.Values.Count > 0 )
-            {
-                retCookies = new HttpCookieCollection();
-                retCookies.Add(cookie);
-            } 
-            return retCookies;
+            HttpCookie retCookie = cookie;
+            retCookie.Values.Add(key, value); //does this add duplicate keys?
+            retCookie.Expires = DateTime.Now.AddDays(1); //$$$ make this configurable
+            return retCookie;
         }
 
     }

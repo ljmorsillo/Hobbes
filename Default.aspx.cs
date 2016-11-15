@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Web.Configuration;
 using System.Xml.Linq;
 using System.IO;
+using ircda.hobbes;
 
 public partial class _Default : Page
 {
@@ -20,5 +21,15 @@ public partial class _Default : Page
             XDocument xml = XDocument.Load(new StringReader(cs.SectionInformation.GetRawXml()));
             XElement element = xml.Element("authentication");
         }
+    }
+    protected string DumpCookies()
+    {
+        Request.Cookies.Add(CookieTools.MakeCookie(CookieTools.IRCDACookieName, "TestCookie"));
+        System.Text.StringBuilder output = new System.Text.StringBuilder("DumpCookies: ") ;
+        foreach (string key in Request.Cookies.AllKeys)
+        {
+            output.AppendFormat("{0}:{1}, ", key, Request.Cookies[key].Value);
+        }
+        return output.ToString();
     }
 }
