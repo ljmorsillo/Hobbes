@@ -24,6 +24,7 @@ namespace ircda.hobbes.Tests
             HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName,testCookieValue);
             Assert.IsNotNull(testCookie, "Cookie is null");
             Assert.AreEqual(CookieTools.IRCDACookieName, HttpUtility.HtmlDecode(testCookie.Name), "Problem: Cookie value wrong");
+            Assert.AreEqual(testCookieValue, HttpUtility.HtmlDecode(testCookie.Value));
         }
     }
 }
