@@ -14,8 +14,8 @@ namespace ircda.hobbes
     /// </summary>
     public class SSOConfidence
     {
-        internal static readonly int NoConfidence;
-        internal static readonly int Complete;
+        internal static readonly int NoConfidence = 0;
+        internal static readonly int Complete = 100;
 
         public int SimpleValue { get; set; }
         public string Action { get; set; }

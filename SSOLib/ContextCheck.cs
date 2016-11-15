@@ -4,22 +4,31 @@ using System.Web;
 
 namespace ircda.hobbes
 {
+    /// <summary>
+    /// UserId holder
+    /// <note>stateful object</note>
+    /// </summary>
     public class Id
     {
         public string Name { get; set; }
     }
-    public class Cookies
-    {
-        public static bool HasCookie(HttpContext context)
-        {
-            throw new NotImplementedException();
-            //return false;
-        }
-    }
+ 
 
     public interface IContextChecker
     {
-        SSOConfidence CheckRequest(HttpContext context);
+        /// <summary>
+        /// Do the confidence check of the request and return an updated, aggregate confidence
+        /// Each type of context does different checks. Confidence will be checked against 
+        /// thresholds to determine if SSO or chanllenge of some sort
+        /// </summary>
+        /// <param name="context">The Http request needs to be here</param>
+        /// <param name="confidenceIn">Allows "chaining" the calls and aggregating the confidence</param>
+        /// <returns>New confidence value summarizing what was checked togheter with previous checks</returns>
+        SSOConfidence CheckRequest(HttpContext context,SSOConfidence confidenceIn);
+        /// <summary>
+        /// Each Context checker has it's own configuration key values
+        /// each ConfigKeys will get the specific keys for the context
+        /// </summary>
         Dictionary<string,string> ConfigKeys { get; }
     }
 
@@ -27,13 +36,14 @@ namespace ircda.hobbes
     {
         public Dictionary<string, string> ConfigKeys
         {
+            /// Get the specific keys for endpoint context
             get
             {
                 throw new NotImplementedException();
             }
         }
 
-        public SSOConfidence CheckRequest(HttpContext context)
+        public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
             /*check whitelists here */
             SSOConfidence retval = null;
@@ -55,26 +65,31 @@ namespace ircda.hobbes
     }
     class CookieContext : IContextChecker
     {
-        public SSOConfidence CheckRequest(HttpContext context)
+        public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
-            SSOConfidence retval = null;
-            if (Cookies.HasCookie(context))
+            SSOConfidence retval = confidenceIn;
+
+            if (CookieTools.HasCookie(context.Request.Cookies))
             {
                 /*either High or PartialConfidence */
-                retval.SimpleValue = CalculateCookieConfidence(context);
+                HttpCookie cookie = context.Request.Cookies[CookieTools.IRCDACookieName];
+
+                retval.SimpleValue = calculateCookieConfidence(cookie);
 
             }
-            else {
+            else
+            {
                 retval.SimpleValue = SSOConfidence.NoConfidence;
-
             }
             return retval;
 
         }
 
-        private int CalculateCookieConfidence(HttpContext context)
+        private int calculateCookieConfidence(HttpCookie cookie)
         {
-            throw new NotImplementedException();
+            int retVal = 0;
+            string userId = HttpUtility.HtmlDecode(cookie[CookieTools.IRCDACookieName]); //???get cookie subkey
+            return retVal;
         }
 
         /// <summary>
@@ -90,7 +105,7 @@ namespace ircda.hobbes
     }
     class NetworkContext : IContextChecker
     {
-        public SSOConfidence CheckRequest(HttpContext context)
+        public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
             SSOConfidence retval = null;
             Id netId = getNetworkID(context);
