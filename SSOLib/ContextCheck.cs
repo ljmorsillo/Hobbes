@@ -68,13 +68,13 @@ namespace ircda.hobbes
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
             SSOConfidence retval = confidenceIn;
-
+            //Check if we have cookies and if we have our cookie
+            //$$$ Will we ever want to check for other cookies?
             if (CookieTools.HasCookie(context.Request.Cookies))
             {
                 /*either High or PartialConfidence */
-                HttpCookie cookie = context.Request.Cookies[CookieTools.IRCDACookieName];
-
-                retval.SimpleValue = calculateCookieConfidence(cookie);
+                HttpCookie target = context.Request.Cookies[CookieTools.IRCDACookieName];
+                retval.SimpleValue = calculateCookieConfidence(target);
 
             }
             else

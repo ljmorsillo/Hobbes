@@ -10,10 +10,14 @@ namespace ircda.hobbes
 {
     public class CookieTools
     {
-        /* ??? These should simple be getters and get inited elsewhere (YAGNI?)*/
+        /* ??? These should simple be getters and get inited elsewhere (YAGNI?) or const */
+        //$$$ Make this a HtmlString perhaps?
         public static readonly string IRCDACookieName = "Ircda";
-        public static readonly string Userkey = "user";
-        public static readonly string Rolekey = "role";
+        public static readonly string UserID = "user";
+        public static readonly string Role = "role";
+        public static readonly string Token = "token";
+        
+        public static DateTime TimeTilExpires = DateTime.Now.AddDays(1); //$$$ make this configurable
 
         public static bool HasCookie(HttpCookieCollection cookies)
         {
@@ -21,12 +25,8 @@ namespace ircda.hobbes
             if (cookies.Count > 1)
             {
                 //do we have one of our cookies?
-
-                retVal = true;
-            }
-            else
-            {
-                retVal = false;
+                if (cookies[IRCDACookieName] != null) 
+                    retVal = true;
             }
             return retVal;
         }
@@ -41,8 +41,8 @@ namespace ircda.hobbes
             HttpCookie retCookie = null;
             if (!string.IsNullOrEmpty(cookieName))
             {
-                retCookie = new HttpCookie(cookieName);
-                retCookie.Expires = DateTime.Now.AddDays(1); //$$$ make this configurable
+                retCookie = new HttpCookie(HttpUtility.HtmlEncode(cookieName));
+                retCookie.Expires = CookieTools.TimeTilExpires;
                 if (!string.IsNullOrEmpty(value))
                 {
                     retCookie.Value = HttpUtility.HtmlEncode(value);
@@ -50,17 +50,27 @@ namespace ircda.hobbes
             }
             return retCookie;
         }
-
+        /// <summary>
+        /// Add subvalues to a cookie...
+        /// </summary>
+        /// <param name="cookie"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static HttpCookie AddTo(HttpCookie cookie, string key, string value)
         {
             HttpCookie retCookie = cookie;
             retCookie.Values.Add(key, value); //does this add duplicate keys?
-            retCookie.Expires = DateTime.Now.AddDays(1); //$$$ make this configurable
+            retCookie.Expires = TimeTilExpires;
             return retCookie;
         }
 
+        public static string GetIrcdaCookieValue(HttpCookieCollection cookies, string key)
+        {
+            HttpCookie retCookie = cookies[HttpUtility.HtmlEncode(IRCDACookieName)];         
+            return retCookie.Values[HttpUtility.HtmlEncode(key)];
+        }
+
     }
-    public class CookieFactory
-    {
-    }
+
 }

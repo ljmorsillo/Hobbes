@@ -21,7 +21,7 @@ namespace ircda.hobbes.Tests
         [TestMethod()]
         public void MakeCookieTest()
         {
-            HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName,testCookieValue);
+            HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, testCookieValue);
 
             Assert.IsNotNull(testCookie, "Cookie is null");
             Assert.AreEqual(CookieTools.IRCDACookieName, HttpUtility.HtmlDecode(testCookie.Name), "Problem: Cookie name wrong");
@@ -45,8 +45,30 @@ namespace ircda.hobbes.Tests
             Assert.AreEqual("TestAgainValue", HttpUtility.HtmlDecode(testCookie.Values["TestagainKey"]), "Problem: Cookie with subkey");
             Assert.AreEqual(testCookieValue, testCookie.Values[0], "Problem: Cookie with subkey");
             CookieTools.AddTo(testCookie, "TestagainKey", "TestAgainValue");
-            Assert.IsTrue(testCookie.Values.Count < 3, "Problem: Subkey count: "+ testCookie.Values.Count);
+            Assert.IsTrue(testCookie.Values.Count < 3, "Problem: Subkey count: " + testCookie.Values.Count);
+        }
+        [TestMethod()]
+        public void HasCookieTest()
+        {
+            HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, testCookieValue);
+            HttpCookie testCookie2 = CookieTools.MakeCookie("Bobs Cookie", "Bobs Cookie Val");
+            HttpCookieCollection cookies = new HttpCookieCollection();
+            cookies.Add(testCookie);
+            cookies.Add(testCookie2);
+            Assert.IsTrue(CookieTools.HasCookie(cookies));
 
+        }
+        [TestMethod()]
+        public void GetIrcdaCookieValueTest()
+        {
+            string otherCookieVal = "Bobs Cookie";
+            HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, testCookieValue);
+            HttpCookie testCookie2 = CookieTools.MakeCookie("Bobs Cookie", otherCookieVal);
+            HttpCookieCollection cookies = new HttpCookieCollection();
+            cookies.Add(testCookie);
+            cookies.Add(testCookie2);
+            string result = CookieTools.GetIrcdaCookieValue(cookies, "Bobs Cookie");
+            Assert.AreEqual("Bobs Cookie", result, "Problem: Didn't get value");
         }
     }
 }

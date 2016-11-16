@@ -30,6 +30,10 @@ public partial class _Default : Page
         {
             output.AppendFormat("{0}:{1}, ", key, Request.Cookies[key].Value);
         }
+        if (CookieTools.HasCookie(Request.Cookies))
+        {
+            output.AppendFormat(" - Found IRCDA Cookie\n");
+        }
         return output.ToString();
     }
 }
