@@ -63,8 +63,12 @@ namespace ircda.hobbes
             throw new NotImplementedException();
         }
     }
-    class CookieContext : IContextChecker
+    public class CookieContext : IContextChecker
     {
+        public CookieContext()
+        {   
+            // anything to do here?
+        }
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
             SSOConfidence retval = confidenceIn;

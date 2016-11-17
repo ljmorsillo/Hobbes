@@ -62,12 +62,15 @@ namespace ircda.hobbes.Tests
         public void GetIrcdaCookieValueTest()
         {
             string otherCookieVal = "Bobs Cookie";
-            HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, testCookieValue);
+            string testKey = "testkey";
+
+            HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName,null);
+            CookieTools.AddTo(testCookie, testKey, "Bobs Cookie");
             HttpCookie testCookie2 = CookieTools.MakeCookie("Bobs Cookie", otherCookieVal);
             HttpCookieCollection cookies = new HttpCookieCollection();
             cookies.Add(testCookie);
             cookies.Add(testCookie2);
-            string result = CookieTools.GetIrcdaCookieValue(cookies, "Bobs Cookie");
+            string result = CookieTools.GetIrcdaCookieValue(cookies, testKey);
             Assert.AreEqual("Bobs Cookie", result, "Problem: Didn't get value");
         }
     }

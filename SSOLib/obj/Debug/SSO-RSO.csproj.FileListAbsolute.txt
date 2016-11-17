@@ -10,3 +10,10 @@ C:\Code\hacks\Hobbes\SSOLib\obj\Debug\SSO-RSO-Frmwrk.dll
 C:\Code\hacks\Hobbes\SSOLib\obj\Debug\SSO-RSO-Frmwrk.pdb
 C:\Code\hacks\Hobbes\SSOLib\bin\Debug\SSO-RSO-Frmwrk.dll.CodeAnalysisLog.xml
 C:\Code\hacks\Hobbes\SSOLib\bin\Debug\SSO-RSO-Frmwrk.dll.lastcodeanalysissucceeded
+C:\Code\Hobbes\SSOLib\bin\Debug\SSO-RSO-Frmwrk.dll
+C:\Code\Hobbes\SSOLib\bin\Debug\SSO-RSO-Frmwrk.pdb
+C:\Code\Hobbes\SSOLib\bin\Debug\SSO-RSO-Frmwrk.dll.CodeAnalysisLog.xml
+C:\Code\Hobbes\SSOLib\bin\Debug\SSO-RSO-Frmwrk.dll.lastcodeanalysissucceeded
+C:\Code\Hobbes\SSOLib\obj\Debug\SSO-RSO.csprojResolveAssemblyReference.cache
+C:\Code\Hobbes\SSOLib\obj\Debug\SSO-RSO-Frmwrk.dll
+C:\Code\Hobbes\SSOLib\obj\Debug\SSO-RSO-Frmwrk.pdb

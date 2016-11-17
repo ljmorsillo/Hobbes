@@ -16,9 +16,23 @@ namespace ircda.hobbes
         public static readonly string UserID = "user";
         public static readonly string Role = "role";
         public static readonly string Token = "token";
-        
-        public static DateTime TimeTilExpires = DateTime.Now.AddDays(1); //$$$ make this configurable
 
+        public static readonly int HoursToAdd = 72; //$$$ make this configurable
+
+        /// <summary>
+        /// Calulate new expiration time
+        /// </summary>
+        /// <returns>dateTime of updated expiration</returns>
+        public static DateTime TimeTilExpires()
+        {
+            DateTime retVal = DateTime.Now.AddDays(HoursToAdd);
+            return retVal;
+        } 
+        /// <summary>
+        /// Checks for the presence of the IRCDA cookie
+        /// </summary>
+        /// <param name="cookies"> a list of cookies (i.e. Request.Cookies)</param>
+        /// <returns>bool true if found</returns>
         public static bool HasCookie(HttpCookieCollection cookies)
         {
             bool retVal = false;    //default assume no cookie
@@ -34,15 +48,15 @@ namespace ircda.hobbes
         /// Mostly for making test cookies
         /// </summary>
         /// <param name="cookieName"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">if provided, is the Value (or Values [0]of the cookie)</param>
+        /// <returns>New Cookie</returns>
         public static HttpCookie MakeCookie(string cookieName, string value)
         {
             HttpCookie retCookie = null;
             if (!string.IsNullOrEmpty(cookieName))
             {
                 retCookie = new HttpCookie(HttpUtility.HtmlEncode(cookieName));
-                retCookie.Expires = CookieTools.TimeTilExpires;
+                retCookie.Expires = CookieTools.TimeTilExpires();
                 if (!string.IsNullOrEmpty(value))
                 {
                     retCookie.Value = HttpUtility.HtmlEncode(value);
@@ -53,24 +67,32 @@ namespace ircda.hobbes
         /// <summary>
         /// Add subvalues to a cookie...
         /// </summary>
-        /// <param name="cookie"></param>
+        /// <param name="cookie">Cookie to add kv pair to</param>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <returns></returns>
+        /// <returns>original cookie changed (side effect)</returns>
         public static HttpCookie AddTo(HttpCookie cookie, string key, string value)
         {
             HttpCookie retCookie = cookie;
             retCookie.Values.Add(key, value); //does this add duplicate keys?
-            retCookie.Expires = TimeTilExpires;
+            retCookie.Expires = TimeTilExpires();
             return retCookie;
         }
-
+        /// <summary>
+        /// Get a particular value from the cookie
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <param name="key"></param>
+        /// <returns>return a specific key from the cookie</return>
         public static string GetIrcdaCookieValue(HttpCookieCollection cookies, string key)
         {
             HttpCookie retCookie = cookies[HttpUtility.HtmlEncode(IRCDACookieName)];         
             return retCookie.Values[HttpUtility.HtmlEncode(key)];
         }
-
+        public static void RenewCookie(HttpCookieCollection cookies)
+        {
+            cookies[HttpUtility.HtmlEncode(IRCDACookieName)].Expires = TimeTilExpires();
+        }
     }
 
 }
