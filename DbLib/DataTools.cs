@@ -8,7 +8,6 @@ using System.Data.Common;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using Oracle.ManagedDataAccess.Client;
-using Oracle.ManagedDataAccess.Types;
 using ExtensionMethods;
 
 namespace Scamps

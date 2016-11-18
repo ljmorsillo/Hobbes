@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -50,6 +51,12 @@
     <Compile Include="ContextCheck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SSOConfidence.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\eportal\scamps\scamps\Scamps.csproj">
+      <Project>{7f5304a3-565d-45b2-978d-5d9d214804f7}</Project>
+      <Name>Scamps</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

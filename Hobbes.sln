@@ -1,16 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSO-RSO", "SSOLib\SSO-RSO.csproj", "{FFB84467-95D6-450E-A7B4-1E42116C6062}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{6B5BCDFA-B292-4970-84F3-69E574542524}"
-EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Hobbes(1)", ".", "{03BECE26-6342-457E-A0D1-BC8B8479B748}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		ProjectReferences = "{ffb84467-95d6-450e-a7b4-1e42116c6062}|SSO-RSO-Frmwrk.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_54345"
 		Debug.AspNetCompiler.PhysicalPath = "..\Hobbes\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_54345\"
@@ -30,12 +25,22 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Hobbes(1)", ".", "{03BECE26
 		DefaultWebSiteLanguage = "Visual C#"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSO-RSO", "SSOLib\SSO-RSO.csproj", "{FFB84467-95D6-450E-A7B4-1E42116C6062}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{6B5BCDFA-B292-4970-84F3-69E574542524}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scamps", "..\..\eportal\scamps\scamps\Scamps.csproj", "{7F5304A3-565D-45B2-978D-5D9D214804F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03BECE26-6342-457E-A0D1-BC8B8479B748}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03BECE26-6342-457E-A0D1-BC8B8479B748}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03BECE26-6342-457E-A0D1-BC8B8479B748}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{03BECE26-6342-457E-A0D1-BC8B8479B748}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{FFB84467-95D6-450E-A7B4-1E42116C6062}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FFB84467-95D6-450E-A7B4-1E42116C6062}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFB84467-95D6-450E-A7B4-1E42116C6062}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -44,10 +49,10 @@ Global
 		{6B5BCDFA-B292-4970-84F3-69E574542524}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B5BCDFA-B292-4970-84F3-69E574542524}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B5BCDFA-B292-4970-84F3-69E574542524}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03BECE26-6342-457E-A0D1-BC8B8479B748}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03BECE26-6342-457E-A0D1-BC8B8479B748}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03BECE26-6342-457E-A0D1-BC8B8479B748}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{03BECE26-6342-457E-A0D1-BC8B8479B748}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{7F5304A3-565D-45B2-978D-5D9D214804F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F5304A3-565D-45B2-978D-5D9D214804F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F5304A3-565D-45B2-978D-5D9D214804F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F5304A3-565D-45B2-978D-5D9D214804F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

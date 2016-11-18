@@ -17,3 +17,9 @@ C:\Code\Hobbes\SSOLib\bin\Debug\SSO-RSO-Frmwrk.dll.lastcodeanalysissucceeded
 C:\Code\Hobbes\SSOLib\obj\Debug\SSO-RSO.csprojResolveAssemblyReference.cache
 C:\Code\Hobbes\SSOLib\obj\Debug\SSO-RSO-Frmwrk.dll
 C:\Code\Hobbes\SSOLib\obj\Debug\SSO-RSO-Frmwrk.pdb
+C:\Code\hacks\Hobbes\SSOLib\bin\Debug\Scamps.dll
+C:\Code\hacks\Hobbes\SSOLib\bin\Debug\Oracle.ManagedDataAccess.dll
+C:\Code\hacks\Hobbes\SSOLib\bin\Debug\Newtonsoft.Json.dll
+C:\Code\hacks\Hobbes\SSOLib\bin\Debug\Ionic.Zip.dll
+C:\Code\hacks\Hobbes\SSOLib\bin\Debug\Scamps.pdb
+C:\Code\hacks\Hobbes\SSOLib\bin\Debug\Newtonsoft.Json.xml

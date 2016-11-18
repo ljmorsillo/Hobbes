@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web;
+using System.Text;
+using Scamps;
 
 namespace ircda.hobbes
 {
@@ -31,8 +33,38 @@ namespace ircda.hobbes
         /// </summary>
         Dictionary<string,string> ConfigKeys { get; }
     }
+    /// <summary>
+    /// Actions which are same across all context checks 
+    /// </summary>
+    public class ContextActions
+    {
+        public DBadapter db;
+        public DataTools dt;
+        public ContextActions()
+        {
+            ///Just for testing -not a good permanent solution
+            //db = new DBadapter();
+            dt = new DataTools(System.Configuration.ConfigurationManager.ConnectionStrings["hobbes"]);
+        }
+        /// <summary>
+        /// Do we have this user locally?
+        /// </summary>
+        /// <param name="userToFind"></param>
+        /// <returns></returns>
+        public string GetLocalUserID(Id userToFind)
+        {
+            string retVal = null;
 
-    class EndpointContext : IContextChecker
+            return retVal;
+        }
+        public string AddUserToLocal(Id userToAdd)
+        {
+            string retVal = null;
+
+            return retVal;
+        }
+    }
+    class EndpointContext : ContextActions, IContextChecker
     {
         public Dictionary<string, string> ConfigKeys
         {
@@ -63,11 +95,12 @@ namespace ircda.hobbes
             throw new NotImplementedException();
         }
     }
-    public class CookieContext : IContextChecker
+    public class CookieContext : ContextActions, IContextChecker
     {
         public CookieContext()
         {   
             // anything to do here?
+            
         }
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
@@ -107,7 +140,7 @@ namespace ircda.hobbes
             }
         }
     }
-    class NetworkContext : IContextChecker
+    class NetworkContext : ContextActions, IContextChecker
     {
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
@@ -139,17 +172,45 @@ namespace ircda.hobbes
         }
         private int CalculateNetworkConfidence(Id netId, HttpContext context)
         {
-            throw new NotImplementedException();
+            int retVal = 0;
+            if (IsKnownIdLocally(netId))
+                retVal = 50; //Partial Confidence value
+            return retVal;
         }
-
+        /// <summary>
+        /// Resolve what the network ID of the user is...
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         private Id getNetworkID(HttpContext context)
         {
-            throw new NotImplementedException();
+            Id retVal = new Id();
+            if (context.Request.Headers["Authorization"] != null)
+            {
+                string value = context.Request.Headers["Authorization"];
+                retVal.Name = value.Split(':')[0]; //string before : is username
+            }
+            //??? What if we have both?
+            if (String.IsNullOrEmpty(retVal.Name))
+            {
+                retVal.Name = context.User.Identity.Name;
+            };
+            return retVal;
         }
 
         private bool IsKnownIdLocally(Id netId)
         {
-            throw new NotImplementedException();
+            bool retVal = false;
+            //check local database
+            if (!string.IsNullOrEmpty(GetLocalUserID(netId)))
+            {
+                retVal = true;
+            }
+            else
+            {
+                //check cookies?
+            }
+            return retVal;
         }
     }
 }
