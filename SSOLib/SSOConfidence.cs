@@ -35,7 +35,7 @@ namespace ircda.hobbes
         /// </summary>
         /// <param name="confidence"></param>
         /// <returns></returns>
-        static SSOConfidence Accumulate(SSOConfidence confidence)
+        static public SSOConfidence Accumulate(SSOConfidence confidence)
         { 
             /* clever algorithm for aggregating confidence and weights  
 		    from external configuration goes here... */

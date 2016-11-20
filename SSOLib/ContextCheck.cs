@@ -64,6 +64,38 @@ namespace ircda.hobbes
             return retVal;
         }
     }
+    public static class ContextDriver
+    {
+        static void CheckConfidence(HttpContext context)
+        {
+            /***
+            Process for applying context checks to an incoming request and
+            to calculate a confidence interval then handle the proper challenge
+            ***/
+            //Initial checks:
+            // EndpointContext /*isEndpoint?setHighConfidence:NoConfidence */
+            // CookieContext /*isCookie?checkCoookie():setNoConfidence; calculateCookieConfidence() */
+            // NetworkContext /*networkId?checkCredential:calculateNetworkConfidence() */
+            List<IContextChecker> contextchecks = new List<IContextChecker>();
+            contextchecks.Add(new EndpointContext());
+            contextchecks.Add(new NetworkContext());
+            contextchecks.Add(new CookieContext());
+
+            SSOConfidence cumulativeConfidence = new SSOConfidence();
+            foreach (IContextChecker check in contextchecks)
+            {
+                cumulativeConfidence = SSOConfidence.Accumulate(check.CheckRequest(context, cumulativeConfidence));
+            }
+            /** Get the confidence settings from the configuration file **/
+            //Confidence high = readConfigValue("HighConfidence") partialChallenge = readConfigValue("PartialConfidence"), 
+            //  fullChallenge == readConfigValue("NoConfidence")
+
+            /* following provides rout to failed login, partial login, full login */
+            //EvaluateConfidenceRules()    
+            //RouteBasedOnConfidence()
+        }
+
+    }
     class EndpointContext : ContextActions, IContextChecker
     {
         public Dictionary<string, string> ConfigKeys
