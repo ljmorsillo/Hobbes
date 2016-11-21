@@ -26,12 +26,12 @@ namespace ircda.hobbes
         protected SSOConfidence()
         {
         }
-        public SSOConfidence(int InitialConfidence = 0)
+        public SSOConfidence(int initialConfidence = 0)
         {
-            SimpleValue = InitialConfidence;
+            SimpleValue = initialConfidence;
         }
         /// <summary>
-        /// Acuma
+        /// Aggregate confidence and weights....
         /// </summary>
         /// <param name="confidence"></param>
         /// <returns></returns>

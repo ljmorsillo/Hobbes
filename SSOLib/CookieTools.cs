@@ -17,7 +17,7 @@ namespace ircda.hobbes
         public static readonly string Role = "role";
         public static readonly string Token = "token";
 
-        public static readonly int HoursToAdd = 72; //$$$ make this configurable
+        public static readonly int HoursToAdd = 72; //TODO: make this configurable
 
         /// <summary>
         /// Calulate new expiration time

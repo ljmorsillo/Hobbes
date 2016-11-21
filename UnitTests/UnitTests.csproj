@@ -60,6 +60,7 @@
     <Compile Include="ContextDriverTests.cs" />
     <Compile Include="CookieContextTests.cs" />
     <Compile Include="CookieToolsTests.cs" />
+    <Compile Include="EndpointContextTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

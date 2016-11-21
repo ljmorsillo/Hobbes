@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Text;
 using Scamps;
+using System.Text.RegularExpressions;
 
 namespace ircda.hobbes
 {
@@ -39,10 +40,14 @@ namespace ircda.hobbes
     {
         public DBadapter db;
         public DataTools dt;
-        Dictionary<string, string> ConfigKeys { get; }
+        ///<summary> ConfigKeys is a context dependent list of KV pairs which allow flexibility
+        ///defining confidence ranges, endpoint expressions and other configurable values
+        ///</summary>
+        protected Dictionary<string, string> ConfigKeys { get; }
 
         public ContextActions()
         {
+            //initialize from external sources at creation
             ConfigKeys = new Dictionary<string, string>();
             ///Just for testing -not a good permanent solution
             //db = new DBadapter();
@@ -92,41 +97,43 @@ namespace ircda.hobbes
             /** Get the confidence settings from the configuration file **/
             //Confidence high = readConfigValue("HighConfidence") partialChallenge = readConfigValue("PartialConfidence"), 
             //  fullChallenge == readConfigValue("NoConfidence")
-
             /* following provides rout to failed login, partial login, full login */
-            //EvaluateConfidenceRules()    
-            //RouteBasedOnConfidence()
+            // EvaluateConfidenceRules()    
+            // RouteBasedOnConfidence()
         }
 
     }
-    class EndpointContext : ContextActions, IContextChecker
+    /// <summary>
+    /// Check to see if directed to an endpoint - if so,
+    /// mark the Action of the SSOConfidence to go handle the endpoint 
+    /// </summary>
+    public class EndpointContext : ContextActions, IContextChecker
     {
+        protected Regex simpleEndpointRE = new Regex(@".*/$");
         public EndpointContext()
         {
-            ///$$$ read from DB
+            ///TODO read from DB
+            ///Select "WhitelistEndpoints" from DB
+            ///
             if (ConfigKeys != null)
-                ConfigKeys.Add("endpoint", "http://localhost/hobbes/ehr.ajax");
-        }
-
-        public Dictionary<string, string> ConfigKeys
-        {
-            /// Get the specific keys for endpoint context
-            get
             {
-                return ConfigKeys;
+                ConfigKeys.Add("endpoint", "http://localhost/hobbes/ehr.ajax");
+
             }
         }
+
 
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
             /*check whitelists here */
-            SSOConfidence retval = null;
+            SSOConfidence retval = confidenceIn != null ? confidenceIn : new SSOConfidence();
             if (IsURLanEndPoint(context))
             {
                 retval.SimpleValue = SSOConfidence.Complete;
                 //retval.Instruction = ProcessDocument(endpoint);
             }
-            else {
+            else
+            {
                 retval.SimpleValue = SSOConfidence.NoConfidence;
             }
             return retval;
@@ -134,8 +141,22 @@ namespace ircda.hobbes
 
         private bool IsURLanEndPoint(HttpContext context)
         {
-            //$$$ Do the real check here
-            return false;
+            bool retVal = false;
+            //Check the request
+            string requestedURL = context.Request.Url.AbsolutePath;
+            //parse to determine if endpoint
+
+            //RegEx Checks
+            if (simpleEndpointRE.IsMatch(requestedURL))
+            {
+                return true; //Restructure....
+            }
+
+            ///Whitelist check
+            /// pull out hostname and check if in whitelist - foreach (item in whitelist){}
+            /// later: gethostbyname() and check addresses...
+            
+            return retVal;
         }
     }
     public class CookieContext : ContextActions, IContextChecker
@@ -147,9 +168,9 @@ namespace ircda.hobbes
         }
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
-            SSOConfidence retval = confidenceIn;
+            SSOConfidence retval = (confidenceIn != null) ? confidenceIn : new SSOConfidence();
             //Check if we have cookies and if we have our cookie
-            //$$$ Will we ever want to check for other cookies?
+            //??? Will we ever want to check for other cookies?
             if (CookieTools.HasCookie(context.Request.Cookies))
             {
                 /*either High or PartialConfidence */
@@ -175,20 +196,12 @@ namespace ircda.hobbes
         /// <summary>
         /// Get the specific configuration key value pairs for this type
         /// </summary>
-        public Dictionary<string, string> ConfigKeys
-        {
-            get
-            {
-                //$$$ Fix this to really work
-                return ConfigKeys;
-            }
-        }
     }
     class NetworkContext : ContextActions, IContextChecker
     {
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
-            SSOConfidence retval = null;
+            SSOConfidence retval = confidenceIn != null?confidenceIn:new SSOConfidence();
             Id netId = getNetworkID(context);
             if (!String.IsNullOrEmpty(netId.Name ))
             {
@@ -207,14 +220,11 @@ namespace ircda.hobbes
         /// <summary>
         /// Get the specific configuration key value pairs for this type
         /// </summary>
-        public Dictionary<string, string> ConfigKeys
-        {
-            get
-            {
-                return ConfigKeys;
-                
-            }
-        }
+
+        ///<summary>
+        ///Details of network confidence calculations...
+        ///</summary>
+        ///<returns> Simple confidence value (int) </returns>
         private int CalculateNetworkConfidence(Id netId, HttpContext context)
         {
             int retVal = 0;
@@ -236,10 +246,16 @@ namespace ircda.hobbes
                 retVal.Name = value.Split(':')[0]; //string before : is username
             }
             //??? What if we have both?
-            if (String.IsNullOrEmpty(retVal.Name))
+            if (String.IsNullOrEmpty(retVal.Name) && context.User != null && context.User.Identity != null)
             {
                 retVal.Name = context.User.Identity.Name;
             };
+
+            //$$$ The following will probably not fail gracefully
+            if (!string.IsNullOrEmpty(context.Request.Url.UserInfo))
+            {
+                retVal.Name = context.Request.Url.UserInfo; //???No really, this is user:password@<host>... - do more with it!
+            }
             return retVal;
         }
 
@@ -249,6 +265,7 @@ namespace ircda.hobbes
             //check local database
             if (!string.IsNullOrEmpty(GetLocalUserID(netId)))
             {
+                //TODO: Db check in providers (users)
                 retVal = true;
             }
             else
