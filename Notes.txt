@@ -1,5 +1,6 @@
 ﻿ Tasks
  ==============================================================================
+ Db - fix problem with creating data conntection in code
  Db - create/update SQL to create Db and tables for users, sessions & configuration
  Db - get connection string to db working
  Db - SQL to find existing & update | add session

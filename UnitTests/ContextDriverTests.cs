@@ -5,18 +5,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace ircda.hobbes.Tests
 {
     [TestClass()]
     public class ContextDriverTests
     {
+        private HttpRequest request = new HttpRequest("", "http://localhost/", "");
+        private HttpResponse response = new HttpResponse(null);
+
         [TestMethod()]
         public void CheckConfidenceTest()
         {
+            
             try
             {
-                ContextDriver.CheckConfidence(null);  // this should fail nicely
+                request.Cookies.Add(CookieTools.MakeCookie(CookieTools.IRCDACookieName, "testValue"));
+                HttpContext testContext = new HttpContext(request, response);
+                ContextDriver.CheckConfidences(testContext);  // If this fails, there will be an exception
             }
             catch(Exception ex)
             {

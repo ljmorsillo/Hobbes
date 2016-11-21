@@ -31,7 +31,6 @@ namespace ircda.hobbes
         /// Each Context checker has it's own configuration key values
         /// each ConfigKeys will get the specific keys for the context
         /// </summary>
-        Dictionary<string,string> ConfigKeys { get; }
     }
     /// <summary>
     /// Actions which are same across all context checks 
@@ -40,8 +39,11 @@ namespace ircda.hobbes
     {
         public DBadapter db;
         public DataTools dt;
+        Dictionary<string, string> ConfigKeys { get; }
+
         public ContextActions()
         {
+            ConfigKeys = new Dictionary<string, string>();
             ///Just for testing -not a good permanent solution
             //db = new DBadapter();
             //System.Configuration.ConfigurationManager.ConnectionStringsSettings cstring = 
@@ -67,7 +69,7 @@ namespace ircda.hobbes
     }
     public static class ContextDriver
     {
-        public static void CheckConfidence(HttpContext context)
+        public static void CheckConfidences(HttpContext context)
         {
             /***
             Process for applying context checks to an incoming request and
@@ -102,7 +104,8 @@ namespace ircda.hobbes
         public EndpointContext()
         {
             ///$$$ read from DB
-            this.ConfigKeys.Add("endpoint", "http://localhost/hobbes/ehr.ajax");
+            if (ConfigKeys != null)
+                ConfigKeys.Add("endpoint", "http://localhost/hobbes/ehr.ajax");
         }
 
         public Dictionary<string, string> ConfigKeys
@@ -110,7 +113,7 @@ namespace ircda.hobbes
             /// Get the specific keys for endpoint context
             get
             {
-                throw new NotImplementedException();
+                return ConfigKeys;
             }
         }
 
@@ -131,7 +134,8 @@ namespace ircda.hobbes
 
         private bool IsURLanEndPoint(HttpContext context)
         {
-            throw new NotImplementedException();
+            //$$$ Do the real check here
+            return false;
         }
     }
     public class CookieContext : ContextActions, IContextChecker
@@ -175,7 +179,8 @@ namespace ircda.hobbes
         {
             get
             {
-                throw new NotImplementedException();
+                //$$$ Fix this to really work
+                return ConfigKeys;
             }
         }
     }
@@ -206,7 +211,8 @@ namespace ircda.hobbes
         {
             get
             {
-                throw new NotImplementedException();
+                return ConfigKeys;
+                
             }
         }
         private int CalculateNetworkConfidence(Id netId, HttpContext context)
