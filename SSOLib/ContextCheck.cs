@@ -44,7 +44,8 @@ namespace ircda.hobbes
         {
             ///Just for testing -not a good permanent solution
             //db = new DBadapter();
-            dt = new DataTools(System.Configuration.ConfigurationManager.ConnectionStrings["hobbes"]);
+            //System.Configuration.ConfigurationManager.ConnectionStringsSettings cstring = 
+            //dt = new DataTools(System.Configuration.ConfigurationManager.ConnectionStrings["hobbes"]);
         }
         /// <summary>
         /// Do we have this user locally?
@@ -66,7 +67,7 @@ namespace ircda.hobbes
     }
     public static class ContextDriver
     {
-        static void CheckConfidence(HttpContext context)
+        public static void CheckConfidence(HttpContext context)
         {
             /***
             Process for applying context checks to an incoming request and
@@ -98,6 +99,12 @@ namespace ircda.hobbes
     }
     class EndpointContext : ContextActions, IContextChecker
     {
+        public EndpointContext()
+        {
+            ///$$$ read from DB
+            this.ConfigKeys.Add("endpoint", "http://localhost/hobbes/ehr.ajax");
+        }
+
         public Dictionary<string, string> ConfigKeys
         {
             /// Get the specific keys for endpoint context

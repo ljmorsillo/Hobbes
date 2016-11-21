@@ -57,6 +57,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ContextDriverTests.cs" />
     <Compile Include="CookieContextTests.cs" />
     <Compile Include="CookieToolsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
