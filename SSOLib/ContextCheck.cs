@@ -1,4 +1,8 @@
-﻿using System;
+﻿///<summary>
+///Context Checks for Single-Signon, Reduced Sign on
+///Submitted for review 2016-Nov-21 please start with ContextDriver to see overall flow
+///</summary>
+using System;
 using System.Collections.Generic;
 using System.Web;
 using System.Text;
@@ -49,8 +53,10 @@ namespace ircda.hobbes
         {
             //initialize from external sources at creation
             ConfigKeys = new Dictionary<string, string>();
-            ///Just for testing -not a good permanent solution
+            
+            //Just creating new adapter doesn't really work - defaults to SCAMPS connection....
             //db = new DBadapter();
+
             //System.Configuration.ConfigurationManager.ConnectionStringsSettings cstring = 
             //dt = new DataTools(System.Configuration.ConfigurationManager.ConnectionStrings["hobbes"]);
         }

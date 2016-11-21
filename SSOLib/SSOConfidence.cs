@@ -1,4 +1,5 @@
-﻿using System;
+﻿///Confidence object - this is initially simple - submitted for review 2016-Nov-21
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;

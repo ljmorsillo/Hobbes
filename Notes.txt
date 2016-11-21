@@ -6,11 +6,11 @@
  Db - SQL to find user
  Db - SQL to get confidence config ranges & other config keys
  Get general top to bottom scenario working - test returning no, med & high confidence
- Finish routing based on confidence
+ Finish routing based on confidence - including enpoint processing callout
  Network Context - add more to checks, more pieces of information like incoming address, whitelists
  Endpoint Context - define Db config for it
- Cookie Context -  
- 
+ Cookie Context -  CookieTools, be sure to add configurable expirations....
+ Add full login challenge/resolution for AD,
  
  Research & General
  ==============================================================================
