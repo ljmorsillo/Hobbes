@@ -43,6 +43,9 @@ namespace ircda.hobbes
     public class ContextActions
     {
         public DBadapter db;
+        string provider = System.Configuration.ConfigurationManager.ConnectionStrings["hobbes"].ToString();
+        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SCAMPs"].ToString();
+
         public DataTools dt;
         ///<summary> ConfigKeys is a context dependent list of KV pairs which allow flexibility
         ///defining confidence ranges, endpoint expressions and other configurable values
@@ -58,7 +61,10 @@ namespace ircda.hobbes
             //db = new DBadapter();
 
             //System.Configuration.ConfigurationManager.ConnectionStringsSettings cstring = 
-            //dt = new DataTools(System.Configuration.ConfigurationManager.ConnectionStrings["hobbes"]);
+            dt = new DataTools();
+            dt.Provider = provider;
+            dt.ConnectionString = connectionString;
+            dt.OpenConnection();
         }
         /// <summary>
         /// Do we have this user locally?
