@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Configuration;
 
 namespace ircda.hobbes.Tests
 {
@@ -15,7 +16,12 @@ namespace ircda.hobbes.Tests
     {
         private HttpRequest request = new HttpRequest("", "http://localhost/", "");
         private HttpResponse response = new HttpResponse(null);
-
+        [TestMethod()]
+        public void VerifyAppDomainHasConfigurationSettings()
+        {
+            string value = ConfigurationManager.AppSettings["TestValue"];
+            Assert.IsFalse(String.IsNullOrEmpty(value), "No App.Config found.");
+        }
         [TestMethod()]
         public void CheckConfidenceTest()
         {

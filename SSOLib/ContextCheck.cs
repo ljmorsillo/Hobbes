@@ -8,6 +8,7 @@ using System.Web;
 using System.Text;
 using Scamps;
 using System.Text.RegularExpressions;
+using System.Configuration;
 
 namespace ircda.hobbes
 {
@@ -43,20 +44,31 @@ namespace ircda.hobbes
     public class ContextActions
     {
         public DBadapter db;
-        string provider = System.Configuration.ConfigurationManager.ConnectionStrings["hobbes"].ToString();
-        string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SCAMPs"].ToString();
-
+    
         public DataTools dt;
         ///<summary> ConfigKeys is a context dependent list of KV pairs which allow flexibility
         ///defining confidence ranges, endpoint expressions and other configurable values
         ///</summary>
-        protected Dictionary<string, string> ConfigKeys { get; }
-
+        protected Dictionary<string, string> ConfigKeys { get; set; }
+        public string provider;
+        public string connectionString;
         public ContextActions()
         {
+            try
+            {
+                System.Configuration.Configuration rootWebConfig1 =
+                    System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(null);
+                provider = System.Configuration.ConfigurationManager.ConnectionStrings["scamps"].ToString();
+                connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SCAMPs"].ToString();
+            }
+            catch (ConfigurationErrorsException)
+            {
+                Console.WriteLine("Error reading app settings");
+            }
+
             //initialize from external sources at creation
             ConfigKeys = new Dictionary<string, string>();
-            
+            ConfigKeys.Add("Version", "0.2");
             //Just creating new adapter doesn't really work - defaults to SCAMPS connection....
             //db = new DBadapter();
 
@@ -122,7 +134,7 @@ namespace ircda.hobbes
     public class EndpointContext : ContextActions, IContextChecker
     {
         protected Regex simpleEndpointRE = new Regex(@".*/$");
-        public EndpointContext()
+        public EndpointContext() : base()
         {
             ///TODO read from DB
             ///Select "WhitelistEndpoints" from DB
@@ -173,7 +185,7 @@ namespace ircda.hobbes
     }
     public class CookieContext : ContextActions, IContextChecker
     {
-        public CookieContext()
+        public CookieContext() : base()
         {   
             // anything to do here?
             
@@ -211,6 +223,9 @@ namespace ircda.hobbes
     }
     class NetworkContext : ContextActions, IContextChecker
     {
+        public NetworkContext() :  base()
+        {
+        }
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
             SSOConfidence retval = confidenceIn != null?confidenceIn:new SSOConfidence();
