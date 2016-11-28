@@ -11,14 +11,37 @@
 	Network Context - add more to checks, more pieces of information like incoming address, whitelists
 	Endpoint Context - define Db config for it
 	Cookie Context -  CookieTools, be sure to add configurable expirations....
-	Add full login challenge/resolution for AD,
+	Cookies - handling - Encrypt, decrypt cookies
+	Cookies - SessionID, permission keys, tests & implementation
+	Cookies - example of timeout handling
+	User Management - User LEAD (ala CRUD) & tests
+	Add full login challenge/resolution for localDb,AD, fall-through 
+	OAuth,OpenID hooks
+	Logging - both error passing and internal (audit) logging of user activities
+
+Scenarios
+==================================================================================
+	As a user I want to login to a system for the first time and then have it add me to the UserDb
+	As a user I want to login to a system and have the system help if I have previously created a cookie
+	As a user I want to login to a system as an AD user
+	As a user I want to use my Google login to authorize me via OAuth
+
+
+	As an administrator I want to add a new user
+	As an administrator I want to list users
+	As an administrator I want to edit user parameters - including permissions & groups
+	As an administrator I want to delete a user
+
+
  
  Research & General
  ==============================================================================
- Is there already a mechanism for the server to connect to the EHR Authorization server (with out an) 
+ 	Assuming Scamps.environment is equivalent to ADMIN_CONFIG
  
  In HttpContext, for Network Context check these clues: 
  <authentication mode="Forms"> Current User is: , System.Security.Principal.GenericIdentity
  <authentication mode="Windows"> Current User is: , System.Security.Principal.WindowsIdentity
 
- 
+ Questions
+ ================================================================================
+ Is there already a mechanism for the server to connect to the EHR Authorization server (with out an explicit httpClient object?)

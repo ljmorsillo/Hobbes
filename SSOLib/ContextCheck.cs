@@ -49,7 +49,7 @@ namespace ircda.hobbes
         ///<summary> ConfigKeys is a context dependent list of KV pairs which allow flexibility
         ///defining confidence ranges, endpoint expressions and other configurable values
         ///</summary>
-        protected Dictionary<string, string> ConfigKeys { get; set; }
+        protected List<KeyValuePair<string,string>> ConfigKeys { get; set; }
         public string provider;
         public string connectionString;
         public ContextActions()
@@ -67,8 +67,8 @@ namespace ircda.hobbes
             }
 
             //initialize from external sources at creation
-            ConfigKeys = new Dictionary<string, string>();
-            ConfigKeys.Add("Version", "0.2");
+            ConfigKeys = new List<KeyValuePair<string, string>>();
+            ConfigKeys.Add(new KeyValuePair<string, string>("Version", "0.2"));
             //Just creating new adapter doesn't really work - defaults to SCAMPS connection....
             //db = new DBadapter();
 
@@ -76,8 +76,22 @@ namespace ircda.hobbes
             dt = new DataTools();
             dt.Provider = provider;
             dt.ConnectionString = connectionString;
-            dt.OpenConnection();
+            //dt.OpenConnection();
         }
+        protected void InitConfigKeys(DataTools db)
+        {
+            if (ConfigKeys != null)
+            {
+                while (!db.EOF)
+                {
+                    var row = db.GetRow();
+                    var nm = row["value"];
+                    ConfigKeys.Add(new KeyValuePair<string, string>("endpoint", nm.ToString()));
+                    db.NextRow();
+                }
+            }
+        }
+
         /// <summary>
         /// Do we have this user locally?
         /// </summary>
@@ -98,7 +112,7 @@ namespace ircda.hobbes
     }
     public static class ContextDriver
     {
-        public static void CheckConfidences(HttpContext context)
+        public static SSOConfidence CheckConfidences(HttpContext context)
         {
             /***
             Process for applying context checks to an incoming request and
@@ -121,9 +135,10 @@ namespace ircda.hobbes
             /** Get the confidence settings from the configuration file **/
             //Confidence high = readConfigValue("HighConfidence") partialChallenge = readConfigValue("PartialConfidence"), 
             //  fullChallenge == readConfigValue("NoConfidence")
-            /* following provides rout to failed login, partial login, full login */
+            /* following provides route to failed login, partial login, full login */
             // EvaluateConfidenceRules()    
             // RouteBasedOnConfidence()
+            return cumulativeConfidence;
         }
 
     }
@@ -138,15 +153,16 @@ namespace ircda.hobbes
         {
             ///TODO read from DB
             ///Select "WhitelistEndpoints" from DB
-            ///
-            if (ConfigKeys != null)
+            string query = "select value from environment where name like '%Whitelist-endpoint'"; ///$$$ Remove to external file
+            using (var db = new Scamps.DataTools(System.Configuration.ConfigurationManager.ConnectionStrings["SCAMPs"]))
             {
-                ConfigKeys.Add("endpoint", "http://localhost/hobbes/ehr.ajax");
-
+                db.GetResultSet(query);
+                //cseed = db.GetValue("select value from environment where name like '%Whitelist-endpoint'").ToString();
+                InitConfigKeys(db);
             }
         }
 
-
+ 
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
             /*check whitelists here */
