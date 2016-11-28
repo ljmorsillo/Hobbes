@@ -1,19 +1,22 @@
 ﻿ Tasks
  ==============================================================================
- Db - get connection string to db working Db - fix problem with creating data conntection in code
- Db - create/update SQL to create Db and tables for users, sessions & configuration
- Db - SQL to find existing & update | add session
- Db - SQL to find user
- Db - SQL to get confidence config ranges & other config keys
- Get general top to bottom scenario working - test returning no, med & high confidence
- Finish routing based on confidence - including enpoint processing callout
- Network Context - add more to checks, more pieces of information like incoming address, whitelists
- Endpoint Context - define Db config for it
- Cookie Context -  CookieTools, be sure to add configurable expirations....
- Add full login challenge/resolution for AD,
+ Done
+ x	Db - get connection string to db working Db - Connection to SCAMPS 
+ x	Db - create/update SQL to create Db and tables for users, sessions & configuration
+	Db - SQL to find existing & update | add session
+	Db - SQL to find user
+	Db - SQL to get confidence config ranges & other config keys
+	Get general top to bottom scenario working - test returning no, med & high confidence
+	Finish routing based on confidence - including enpoint processing callout
+	Network Context - add more to checks, more pieces of information like incoming address, whitelists
+	Endpoint Context - define Db config for it
+	Cookie Context -  CookieTools, be sure to add configurable expirations....
+	Add full login challenge/resolution for AD,
  
  Research & General
  ==============================================================================
+ Is there already a mechanism for the server to connect to the EHR Authorization server (with out an) 
+ 
  In HttpContext, for Network Context check these clues: 
  <authentication mode="Forms"> Current User is: , System.Security.Principal.GenericIdentity
  <authentication mode="Windows"> Current User is: , System.Security.Principal.WindowsIdentity

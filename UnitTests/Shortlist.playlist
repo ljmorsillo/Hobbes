@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="ircda.hobbes.Tests.ContextDriverTests.CheckConfidenceTest" /><Add Test="ircda.hobbes.Tests.EndpointContextTests.CheckRequestTest" /><Add Test="ircda.hobbes.Tests.CookieContextTests.CheckRequestTest" /></Playlist>
