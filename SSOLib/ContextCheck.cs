@@ -97,9 +97,16 @@ namespace ircda.hobbes
                 }
             }
         }
+        /// <summary>
+        /// Make sure the key inputs to CheckRequest and other methods are OK
+        /// Returns an SSOConfidence object
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="confidenceIn"></param>
+        /// <returns>Confidence object - new (copy) object </returns>
         protected SSOConfidence CheckInputs(HttpContext context, SSOConfidence confidenceIn)
         {
-            SSOConfidence retVal = confidenceIn != null ? confidenceIn : new SSOConfidence();
+            SSOConfidence retVal = confidenceIn != null ? new SSOConfidence(confidenceIn) : new SSOConfidence();
             if (context.Request == null)
                 retVal.Action = SSOConfidence.BadRequest;
             return (retVal);
@@ -139,10 +146,10 @@ namespace ircda.hobbes
             contextchecks.Add(new NetworkContext());
             contextchecks.Add(new CookieContext());
 
-            SSOConfidence cumulativeConfidence = new SSOConfidence();
+            SSOConfidence cumulativeConfidence = null; //@first there is no SSOConfidence(), one is created by checkRequest;
             foreach (IContextChecker check in contextchecks)
             {
-                cumulativeConfidence = SSOConfidence.Accumulate(check.CheckRequest(context, cumulativeConfidence));
+                cumulativeConfidence = check.CheckRequest(context, cumulativeConfidence);
             }
             /** Get the confidence settings from the configuration file **/
             //Confidence high = readConfigValue("HighConfidence") partialChallenge = readConfigValue("PartialConfidence"), 
@@ -187,14 +194,21 @@ namespace ircda.hobbes
             if (retval.IsBadRequest())
                 return retval; //Don't bother with further processing, it'll break
 
+            int confidenceVal = 0;
             if (IsURLanEndPoint(context))
             {
-                retval.SimpleValue = SSOConfidence.CompleteConfidence;
-                //retval.Instruction = ProcessDocument(endpoint);
+                confidenceVal = SSOConfidence.CompleteConfidence;
+                retval.Action = SSOConfidence.ProcessEndpoint;  //ProcessDocument(endpoint);
             }
             else
             {
-                retval.SimpleValue = SSOConfidence.NoConfidence;
+                confidenceVal = SSOConfidence.NoConfidence;
+            }
+            retval.SimpleValue = confidenceVal;
+
+            if (confidenceIn != null)
+            {
+                retval = retval.Accumulate(confidenceIn);
             }
             return retval;
         }
@@ -248,18 +262,24 @@ namespace ircda.hobbes
             SSOConfidence retval = CheckInputs(context,confidenceIn);
             if (retval.IsBadRequest())
                 return retval;
+            int confidenceVal = 0;
             //Check if we have cookies and if we have our cookie
             //??? Will we ever want to check for other cookies?
             if (CookieTools.HasCookie(context.Request.Cookies))
             {
                 /*either High or PartialConfidence */
                 HttpCookie target = context.Request.Cookies[CookieTools.IRCDACookieName];
-                retval.SimpleValue = calculateCookieConfidence(target);
-
+                confidenceVal = calculateCookieConfidence(target);         
             }
             else
             {
-                retval.SimpleValue = SSOConfidence.NoConfidence;
+                confidenceVal = SSOConfidence.NoConfidence;
+            }
+            retval.SimpleValue = confidenceVal;
+
+            if (confidenceIn != null)
+            {
+                retval = retval.Accumulate(confidenceIn);
             }
             return retval;
 
@@ -293,19 +313,25 @@ namespace ircda.hobbes
             SSOConfidence retval = CheckInputs(context, confidenceIn);
             if (retval.IsBadRequest())
                 return retval; //Don't bother with further processing, it'll break
+            int confidenceVal = 0;
 
             Id netId = getNetworkID(context);
             if (!String.IsNullOrEmpty(netId.Name ))
             {
                 if (IsKnownIdLocally(netId))
                 {
-                    retval.SimpleValue = CalculateNetworkConfidence(netId, context);
-    
+                    confidenceVal = CalculateNetworkConfidence(netId, context);
                 }
             }
             else
             {
-                retval.SimpleValue = SSOConfidence.NoConfidence;
+                confidenceVal = SSOConfidence.NoConfidence;
+            }
+            retval.SimpleValue = confidenceVal;
+
+            if (confidenceIn != null)
+            {
+                retval = retval.Accumulate(confidenceIn);
             }
             return retval;
         }

@@ -25,17 +25,19 @@ namespace ircda.hobbes.Tests
         [TestMethod()]
         public void CheckConfidenceTest()
         {
-            
+            SSOConfidence result = null;
             try
             {
                 request.Cookies.Add(CookieTools.MakeCookie(CookieTools.IRCDACookieName, "testValue"));
                 HttpContext testContext = new HttpContext(request, response);
-                ContextDriver.CheckConfidences(testContext);  // If this fails, there will be an exception
+                result = ContextDriver.CheckConfidences(testContext);  
             }
             catch(Exception ex)
             {
                 Assert.Fail("Problem: Check Context Failure {0} @ {1}", ex.Message, ex.StackTrace);
             }
+            Assert.IsNotNull(result, "Problem: ContextDriver.CheckConfidences returned null");
+            Assert.IsTrue(result.SimpleValue > 50, "Problem: No Confidence at all");
         }
     }
 }

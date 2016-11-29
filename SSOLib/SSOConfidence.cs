@@ -30,6 +30,11 @@ namespace ircda.hobbes
         protected SSOConfidence()
         {
         }
+        public SSOConfidence(SSOConfidence confidenceIn)
+        {
+            SimpleValue = confidenceIn.SimpleValue;
+            Action = confidenceIn.Action;
+        }
         public SSOConfidence(int initialConfidence = 0)
         {
             SimpleValue = initialConfidence;
@@ -39,10 +44,12 @@ namespace ircda.hobbes
         /// </summary>
         /// <param name="confidence"></param>
         /// <returns></returns>
-        static public SSOConfidence Accumulate(SSOConfidence confidence)
-        { 
+        public SSOConfidence Accumulate(SSOConfidence confidence)
+        {
             /* clever algorithm for aggregating confidence and weights  
 		    from external configuration goes here... */
+            confidence.SimpleValue += this.SimpleValue;
+
             return confidence;
         }
         /// <summary>
