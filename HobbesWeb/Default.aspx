@@ -4,7 +4,9 @@
     <section class="featured">
         <div class="content-wrapper">
             <hgroup class="title">
-                <h1><%: Title %>.</h1>
+                <h1>
+                    <br />
+                    <%: Title %>.</h1>
                 <h2>Modify this template to jump-start your ASP.NET application.</h2>
             </hgroup>
             <p>
@@ -36,6 +38,9 @@
             <h5>Find Web Hosting</h5>
             You can easily find a web hosting company that offers the right mix of features and price for your applications.
             <a href="http://go.microsoft.com/fwlink/?LinkId=245143">Learn more…</a>
+        </li>
+        <li class="three">
+            <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Button" />
         </li>
     </ol>
 </asp:Content>

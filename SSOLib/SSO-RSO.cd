@@ -10,7 +10,7 @@
   <Class Name="ircda.hobbes.SSOConfidence">
     <Position X="0.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAIAAAIAAAAAAAAABAAAAAAAAABAAAAAAAQ=</HashCode>
+      <HashCode>AAAgAAAAAAIAAAAAEAAAAAAABAEAAAAgAABAAAAAAAQ=</HashCode>
       <FileName>SSOConfidence.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -24,14 +24,7 @@
   <Class Name="ircda.hobbes.ContextActions" Collapsed="true">
     <Position X="4.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AABAAAQAAAAQAAgAAAAAAAIAAAIAAAAAAAQAAAAAAAA=</HashCode>
-      <FileName>ContextCheck.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ircda.hobbes.ContextDriver">
-    <Position X="2.5" Y="3" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AARAAAQAAAAAAAgAAAAAAAIAAAIAAAAAAAQAAAABAAA=</HashCode>
       <FileName>ContextCheck.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -54,10 +47,17 @@
   <Class Name="ircda.hobbes.NetworkContext" Collapsed="true">
     <Position X="2.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAACAAAAAAAAAAAAAAIAAAIAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAIAAAAACAAAAAAAAAAAAAAIAAAIIAAAAAAA=</HashCode>
       <FileName>ContextCheck.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ircda.hobbes.ContextDriver">
+    <Position X="2.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ContextCheck.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Interface Name="ircda.hobbes.IContextChecker" Collapsed="true">
     <Position X="6.75" Y="0.5" Width="1.5" />

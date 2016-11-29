@@ -275,7 +275,8 @@ ol.round {
 
         ol.round li.three {
             background: url("../Images/orderedList3.png") no-repeat;
-        }
+    height: 47px;
+}
 
         ol.round li.four {
             background: url("../Images/orderedList4.png") no-repeat;

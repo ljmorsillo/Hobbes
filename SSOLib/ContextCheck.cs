@@ -13,6 +13,42 @@ using System.Linq;
 
 namespace ircda.hobbes
 {
+
+    /// <summary>
+    /// Driver object to call confidence pieces....
+    /// </summary>
+    public static class ContextDriver
+    {
+        public static SSOConfidence CheckConfidences(HttpContext context)
+        {
+            /***
+            Process for applying context checks to an incoming request and
+            to calculate a confidence interval then handle the proper challenge
+            ***/
+            //Initial checks:
+            // EndpointContext /*isEndpoint?setHighConfidence:NoConfidence */
+            // CookieContext /*isCookie?checkCoookie():setNoConfidence; calculateCookieConfidence() */
+            // NetworkContext /*networkId?checkCredential:calculateNetworkConfidence() */
+            List<IContextChecker> contextchecks = new List<IContextChecker>();
+            contextchecks.Add(new EndpointContext());
+            contextchecks.Add(new NetworkContext());
+            contextchecks.Add(new CookieContext());
+
+            SSOConfidence cumulativeConfidence = null; //@first there is no SSOConfidence(), one is created by checkRequest;
+            foreach (IContextChecker check in contextchecks)
+            {
+                cumulativeConfidence = check.CheckRequest(context, cumulativeConfidence);
+            }
+            /** Get the confidence settings from the configuration file **/
+            //Confidence high = readConfigValue("HighConfidence") partialChallenge = readConfigValue("PartialConfidence"), 
+            //  fullChallenge == readConfigValue("NoConfidence")
+            /* following provides route to failed login, partial login, full login */
+            // EvaluateConfidenceRules()    
+            // RouteBasedOnConfidence()
+            return cumulativeConfidence;
+        }
+    }
+
     /// <summary>
     /// UserId holder
     /// <note>stateful object</note>
@@ -128,38 +164,6 @@ namespace ircda.hobbes
 
             return retVal;
         }
-    }
-    public static class ContextDriver
-    {
-        public static SSOConfidence CheckConfidences(HttpContext context)
-        {
-            /***
-            Process for applying context checks to an incoming request and
-            to calculate a confidence interval then handle the proper challenge
-            ***/
-            //Initial checks:
-            // EndpointContext /*isEndpoint?setHighConfidence:NoConfidence */
-            // CookieContext /*isCookie?checkCoookie():setNoConfidence; calculateCookieConfidence() */
-            // NetworkContext /*networkId?checkCredential:calculateNetworkConfidence() */
-            List<IContextChecker> contextchecks = new List<IContextChecker>();
-            contextchecks.Add(new EndpointContext());
-            contextchecks.Add(new NetworkContext());
-            contextchecks.Add(new CookieContext());
-
-            SSOConfidence cumulativeConfidence = null; //@first there is no SSOConfidence(), one is created by checkRequest;
-            foreach (IContextChecker check in contextchecks)
-            {
-                cumulativeConfidence = check.CheckRequest(context, cumulativeConfidence);
-            }
-            /** Get the confidence settings from the configuration file **/
-            //Confidence high = readConfigValue("HighConfidence") partialChallenge = readConfigValue("PartialConfidence"), 
-            //  fullChallenge == readConfigValue("NoConfidence")
-            /* following provides route to failed login, partial login, full login */
-            // EvaluateConfidenceRules()    
-            // RouteBasedOnConfidence()
-            return cumulativeConfidence;
-        }
-
     }
     /// <summary>
     /// Check to see if directed to an endpoint - if so,

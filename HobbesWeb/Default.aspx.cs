@@ -36,4 +36,10 @@ public partial class _Default : Page
         }
         return output.ToString();
     }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("TestLogin.aspx"); //new session
+        //((Button)sender).PostBackUrl = "~/TestLogin.aspx"; //no new session
+    }
 }
