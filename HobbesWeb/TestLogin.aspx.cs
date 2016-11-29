@@ -13,5 +13,7 @@ public partial class TestLogin : System.Web.UI.Page
     {
         SSOConfidence result = null;
         result = ContextDriver.CheckConfidences(this.Context);
+        //check result
+        //If we have partial confidence
     }
 }

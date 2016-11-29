@@ -95,5 +95,15 @@ namespace ircda.hobbes
             cookies[HttpUtility.HtmlEncode(IRCDACookieName)].Expires = TimeTilExpires();
         }
     }
+    /// <summary>
+    /// Object to represent a standard IRCDA cookie with certain subfields and encryption
+    /// </summary>
+    public class IRCDACookie
+    {
+        IRCDACookie()
+        {
+            HttpCookie cookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, null);
+        }
+    }
 
 }

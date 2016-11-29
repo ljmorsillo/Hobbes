@@ -47,10 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authenticator.cs" />
     <Compile Include="CookieTools.cs" />
     <Compile Include="ContextCheck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SSOConfidence.cs" />
+    <Compile Include="UserManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SSO-RSO.cd" />

@@ -9,7 +9,10 @@
 	Get general top to bottom scenario working - test returning no, med & high confidence
 	Finish routing based on confidence - including enpoint processing callout
 	Network Context - add more to checks, more pieces of information like incoming address, whitelists
-	Endpoint Context - define Db config for it
+ x	Endpoint Context - define Db config for it
+	IDisposable on ContextActions
+
+	Externalize SQL queries
 	Cookie Context -  CookieTools, be sure to add configurable expirations....
 	Cookies - handling - Encrypt, decrypt cookies
 	Cookies - SessionID, permission keys, tests & implementation
@@ -18,6 +21,7 @@
 	Add full login challenge/resolution for localDb,AD, fall-through 
 	OAuth,OpenID hooks
 	Logging - both error passing and internal (audit) logging of user activities
+	Whitelists table - out of Environment table
 
 Scenarios
 ==================================================================================
@@ -33,14 +37,20 @@ Scenarios
 	As an administrator I want to delete a user
 
 
- 
  Research & General
  ==============================================================================
  	Assuming Scamps.environment is equivalent to ADMIN_CONFIG
  
- In HttpContext, for Network Context check these clues: 
- <authentication mode="Forms"> Current User is: , System.Security.Principal.GenericIdentity
- <authentication mode="Windows"> Current User is: , System.Security.Principal.WindowsIdentity
+	Separate representation of data in page (HttpContext) from code for authorization 
+	as much as possible. Token, UserID, Password, Domain are required for Authentication
+	Level of Authentication is seperately determined by ContextChecks.
+
+	In HttpContext, for Network Context check these clues: 
+	<authentication mode="Forms"> Current User is: , System.Security.Principal.GenericIdentity
+	<authentication mode="Windows"> Current User is: , System.Security.Principal.WindowsIdentity
+	
+	Also for network context, take apart the hostname and address to check for whitelisted values to 
+	allow RSO
 
  Questions
  ================================================================================
