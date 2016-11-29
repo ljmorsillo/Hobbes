@@ -35,5 +35,16 @@ namespace ircda.hobbes.Tests
             confidence = endpointUUT.CheckRequest(testContext,confidence);
             Assert.IsTrue(confidence.SimpleValue == 100);
         }
+        [TestMethod()]
+        public void CheckRequestTest2()
+        {
+            request.Cookies.Add(CookieTools.MakeCookie(CookieTools.IRCDACookieName, "testValue"+"ehr.ajax"));
+            request = new HttpRequest("", "http://localhost/ehr.ajax", "");
+            HttpContext testContext = new HttpContext(request, response);
+            
+
+            confidence = endpointUUT.CheckRequest(testContext, confidence);
+            Assert.IsTrue(confidence.SimpleValue == 100);
+        }
     }
 }

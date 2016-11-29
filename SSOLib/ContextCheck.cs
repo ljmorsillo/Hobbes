@@ -9,6 +9,7 @@ using System.Text;
 using Scamps;
 using System.Text.RegularExpressions;
 using System.Configuration;
+using System.Linq;
 
 namespace ircda.hobbes
 {
@@ -43,7 +44,7 @@ namespace ircda.hobbes
     /// </summary>
     public class ContextActions
     {
-        public DBadapter db;
+        //public DBadapter db;
     
         public DataTools dt;
         ///<summary> ConfigKeys is a context dependent list of KV pairs which allow flexibility
@@ -78,6 +79,11 @@ namespace ircda.hobbes
             dt.ConnectionString = connectionString;
             //dt.OpenConnection();
         }
+        /// <summary>
+        /// Given a DataTools object where the query is set to grab the appropriate keys, 
+        /// put the ContextSpecific keys into ConfigKeys
+        /// </summary>
+        /// <param name="db"></param>
         protected void InitConfigKeys(DataTools db)
         {
             if (ConfigKeys != null)
@@ -195,6 +201,17 @@ namespace ircda.hobbes
             ///Whitelist check
             /// pull out hostname and check if in whitelist - foreach (item in whitelist){}
             /// later: gethostbyname() and check addresses...
+            var endpointlist = from key in ConfigKeys
+                       where key.Key == "endpoint"
+                       select key.Value;
+
+            foreach (string endpoint in endpointlist)
+            {
+                if (requestedURL.Equals(endpoint))
+                {
+                    retVal = true;
+                }
+            }
             
             return retVal;
         }
