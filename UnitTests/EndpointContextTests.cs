@@ -27,7 +27,7 @@ namespace ircda.hobbes.Tests
         /// Very simple and lame test....
         /// </summary>
         [TestMethod()]
-        public void CheckRequestTest()
+        public void CheckRequestTestRegEx()
         {
             request.Cookies.Add(CookieTools.MakeCookie(CookieTools.IRCDACookieName, "testValue"));
             HttpContext testContext = new HttpContext(request, response);
@@ -36,10 +36,10 @@ namespace ircda.hobbes.Tests
             Assert.IsTrue(confidence.SimpleValue == 100);
         }
         [TestMethod()]
-        public void CheckRequestTest2()
+        public void CheckRequestTestWhitelist()
         {
             request.Cookies.Add(CookieTools.MakeCookie(CookieTools.IRCDACookieName, "testValue"+"ehr.ajax"));
-            request = new HttpRequest("", "http://localhost/ehr.ajax", "");
+            request = new HttpRequest("", "http://localhost/hobbes/ehr.ajax", "");
             HttpContext testContext = new HttpContext(request, response);
             
 

@@ -97,7 +97,13 @@ namespace ircda.hobbes
                 }
             }
         }
-
+        protected SSOConfidence CheckInputs(HttpContext context, SSOConfidence confidenceIn)
+        {
+            SSOConfidence retVal = confidenceIn != null ? confidenceIn : new SSOConfidence();
+            if (context.Request == null)
+                retVal.Action = SSOConfidence.BadRequest;
+            return (retVal);
+        }
         /// <summary>
         /// Do we have this user locally?
         /// </summary>
@@ -168,14 +174,22 @@ namespace ircda.hobbes
             }
         }
 
- 
+         /// <summary>
+         /// Check request to see if the endpoint is trusted, add to confidence 
+         /// </summary>
+         /// <param name="context">HttpContext object</param>
+         /// <param name="confidenceIn">any previous confidence numbers if any or null</param>
+         /// <returns></returns>
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
-            /*check whitelists here */
-            SSOConfidence retval = confidenceIn != null ? confidenceIn : new SSOConfidence();
+            //Inputs
+            SSOConfidence retval = CheckInputs(context, confidenceIn);
+            if (retval.IsBadRequest())
+                return retval; //Don't bother with further processing, it'll break
+
             if (IsURLanEndPoint(context))
             {
-                retval.SimpleValue = SSOConfidence.Complete;
+                retval.SimpleValue = SSOConfidence.CompleteConfidence;
                 //retval.Instruction = ProcessDocument(endpoint);
             }
             else
@@ -184,7 +198,11 @@ namespace ircda.hobbes
             }
             return retval;
         }
-
+        /// <summary>
+        /// Determine if requested url is an endpoint....
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         private bool IsURLanEndPoint(HttpContext context)
         {
             bool retVal = false;
@@ -199,17 +217,19 @@ namespace ircda.hobbes
             }
 
             ///Whitelist check
-            /// pull out hostname and check if in whitelist - foreach (item in whitelist){}
+            /// pull out scheme and check if in whitelist - foreach (item in whitelist){}
             /// later: gethostbyname() and check addresses...
+            requestedURL = context.Request.Url.Host + context.Request.Url.AbsolutePath;
+            //list the endpoints to search
             var endpointlist = from key in ConfigKeys
                        where key.Key == "endpoint"
                        select key.Value;
-
             foreach (string endpoint in endpointlist)
             {
-                if (requestedURL.Equals(endpoint))
+                if (requestedURL.Equals(endpoint.Trim()))
                 {
                     retVal = true;
+                    break;
                 }
             }
             
@@ -221,11 +241,13 @@ namespace ircda.hobbes
         public CookieContext() : base()
         {   
             // anything to do here?
-            
+            // What are the config keys here?
         }
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
-            SSOConfidence retval = (confidenceIn != null) ? confidenceIn : new SSOConfidence();
+            SSOConfidence retval = CheckInputs(context,confidenceIn);
+            if (retval.IsBadRequest())
+                return retval;
             //Check if we have cookies and if we have our cookie
             //??? Will we ever want to check for other cookies?
             if (CookieTools.HasCookie(context.Request.Cookies))
@@ -256,12 +278,22 @@ namespace ircda.hobbes
     }
     class NetworkContext : ContextActions, IContextChecker
     {
+        private string query = "select value from environment where name like '%Whitelist-network'"; ///$$$ Remove to external file
         public NetworkContext() :  base()
-        {
+        {          
+            using (var db = new Scamps.DataTools(System.Configuration.ConfigurationManager.ConnectionStrings["SCAMPs"])) //$$$ Hardcoded string!
+            {
+                db.GetResultSet(query);
+                InitConfigKeys(db);
+            }
         }
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
-            SSOConfidence retval = confidenceIn != null?confidenceIn:new SSOConfidence();
+            //Inputs
+            SSOConfidence retval = CheckInputs(context, confidenceIn);
+            if (retval.IsBadRequest())
+                return retval; //Don't bother with further processing, it'll break
+
             Id netId = getNetworkID(context);
             if (!String.IsNullOrEmpty(netId.Name ))
             {

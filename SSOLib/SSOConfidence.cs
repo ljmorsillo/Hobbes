@@ -15,8 +15,11 @@ namespace ircda.hobbes
     /// </summary>
     public class SSOConfidence
     {
-        internal static readonly int NoConfidence = 0;
-        internal static readonly int Complete = 100;
+        public static readonly int NoConfidence = 0;
+        public static readonly int CompleteConfidence = 100;
+        
+        public static readonly string BadRequest = "badrequest";
+        public static readonly string ProcessEndpoint = "processendpoint";
 
         public int SimpleValue { get; set; }
         public string Action { get; set; }
@@ -41,6 +44,17 @@ namespace ircda.hobbes
             /* clever algorithm for aggregating confidence and weights  
 		    from external configuration goes here... */
             return confidence;
+        }
+        /// <summary>
+        /// convenience
+        /// </summary>
+        /// <returns>true if BadRequest in Action </returns>
+        public bool IsBadRequest()
+        {
+            if (SSOConfidence.BadRequest == this.Action)
+                return true;
+            else
+                return false;
         }
     }
 }
