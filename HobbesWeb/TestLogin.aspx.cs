@@ -12,8 +12,14 @@ public partial class TestLogin : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         SSOConfidence result = null;
+       string userval = CookieTools.GetIrcdaCookieValue(Request.Cookies, CookieTools.UserID);
+        
         result = ContextDriver.CheckConfidences(this.Context);
         //check result
+        if (result.SimpleValue >= 50)
+        {
+            UserTB.Text = userval;
+        }
         //If we have partial confidence
     }
 }

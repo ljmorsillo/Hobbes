@@ -292,7 +292,12 @@ namespace ircda.hobbes
         private int calculateCookieConfidence(HttpCookie cookie)
         {
             int retVal = 0;
-            string userId = HttpUtility.HtmlDecode(cookie[CookieTools.IRCDACookieName]); //???get cookie subkey
+            string userId = cookie[CookieTools.UserID];
+            if (userId.Equals("Tester"))
+            {
+                retVal = 50;
+            }
+
             return retVal;
         }
 

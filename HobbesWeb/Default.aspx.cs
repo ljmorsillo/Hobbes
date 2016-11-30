@@ -4,42 +4,46 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Configuration;
-using System.Web.Configuration;
-using System.Xml.Linq;
-using System.IO;
 using ircda.hobbes;
 
-public partial class _Default : Page
+public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        Configuration webConfig = WebConfigurationManager.OpenWebConfiguration(Request.ApplicationPath);
-        ConfigurationSection cs = webConfig.GetSection("system.web");
-        if (cs != null)
-        {
-            XDocument xml = XDocument.Load(new StringReader(cs.SectionInformation.GetRawXml()));
-            XElement element = xml.Element("authentication");
-        }
-    }
-    protected string DumpCookies()
-    {
-        Request.Cookies.Add(CookieTools.MakeCookie(CookieTools.IRCDACookieName, "TestCookie"));
-        System.Text.StringBuilder output = new System.Text.StringBuilder("DumpCookies: ") ;
-        foreach (string key in Request.Cookies.AllKeys)
-        {
-            output.AppendFormat("{0}:{1}, ", key, Request.Cookies[key].Value);
-        }
-        if (CookieTools.HasCookie(Request.Cookies))
-        {
-            output.AppendFormat(" - Found IRCDA Cookie\n");
-        }
-        return output.ToString();
+
     }
 
-    protected void Button1_Click(object sender, EventArgs e)
+    protected void TextBox1_TextChanged(object sender, EventArgs e)
     {
-        Response.Redirect("TestLogin.aspx"); //new session
-        //((Button)sender).PostBackUrl = "~/TestLogin.aspx"; //no new session
+
+    }
+
+    protected void SetCookiesInResponse_Click(object sender, EventArgs e)
+    {
+        HttpCookie cookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, "HobbesSession");
+        CookieTools.AddTo(cookie, "Session", "TestValue");
+        CookieTools.AddTo(cookie, CookieTools.UserID, "Tester");
+        Context.Response.Cookies.Add(cookie);
+        //MakeButton.PostBackUrl = "~/default.aspx";
+    }
+
+    protected void ShowCookiesInRequest_Click(object sender, EventArgs e)
+    {
+        if (IsPostBack)
+        {
+            for (int ii = 0; ii < Request.Cookies.Count; ii++)
+            {
+                HttpCookie cookie = Request.Cookies[ii];
+                string userID = CookieTools.GetIrcdaCookieValue(Request.Cookies, "UserID");
+                string cookieOut = string.Format("Cookie Name: {0}, Val: {1}, Expiration: {2}, UserID: {3}",
+                    cookie.Name, cookie.Value, cookie.Expires, userID);
+                TextOut.Text = TextOut.Text + System.Environment.NewLine + cookieOut;
+            }
+        }
+    }
+
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+        TextOut.Text = "";
     }
 }
