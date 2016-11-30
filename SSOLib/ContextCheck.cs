@@ -293,11 +293,18 @@ namespace ircda.hobbes
         {
             int retVal = 0;
             string userId = cookie[CookieTools.UserID];
-            if (userId.Equals("Tester"))
+            if (!string.IsNullOrEmpty(userId))
             {
-                retVal = 50;
+                UserManager mg = new UserManager();
+                Dictionary<string,string> usersfound = mg.GetUser(userId);
+                if (usersfound.Count > 0)
+                {
+                    if (userId.Equals(usersfound["username"]))
+                    {
+                        retVal = 50;
+                    }
+                }
             }
-
             return retVal;
         }
 

@@ -18,7 +18,7 @@ public partial class TestLogin : System.Web.UI.Page
         //check result
         if (result.SimpleValue >= 50)
         {
-            UserTB.Text = userval;
+            this.UserTB.Text = userval;
         }
         //If we have partial confidence
     }
