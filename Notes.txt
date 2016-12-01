@@ -39,7 +39,8 @@ Scenarios
 
  Research & General
  ==============================================================================
- 	Assuming Scamps.environment is equivalent to ADMIN_CONFIG
+ 	Assuming Scamps.environment is equivalent to ADMIN_CONFIG => move whitelisting to their own tables - 
+		for multisite types of setups....
  
 	Separate representation of data in page (HttpContext) from code for authorization 
 	as much as possible. Token, UserID, Password, Domain are required for Authentication
