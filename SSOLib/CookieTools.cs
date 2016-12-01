@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Scamps;
 
 namespace ircda.hobbes
 {
@@ -26,7 +27,7 @@ namespace ircda.hobbes
         /// <returns>dateTime of updated expiration</returns>
         public static DateTime TimeTilExpires()
         {
-            DateTime retVal = DateTime.Now.AddDays(HoursToAdd);
+            DateTime retVal = DateTime.Now.AddHours(HoursToAdd);
             return retVal;
         } 
         /// <summary>
@@ -60,7 +61,7 @@ namespace ircda.hobbes
                 retCookie.Expires = CookieTools.TimeTilExpires();
                 if (!string.IsNullOrEmpty(value))
                 {
-                    retCookie.Value = HttpUtility.HtmlEncode(value);
+                    retCookie.Value = Tools.Encrypt(HttpUtility.HtmlEncode(value));
                 }
             }
             return retCookie;
@@ -75,7 +76,11 @@ namespace ircda.hobbes
         public static HttpCookie AddTo(HttpCookie cookie, string key, string value)
         {
             HttpCookie retCookie = cookie;
+            //decrypt and replace
+            retCookie.Value = Scamps.Tools.Decrypt(retCookie.Value);
+            //Now the values are decrypted and can be manipulated
             retCookie.Values.Add(key, value); //does this add duplicate keys?
+            retCookie.Value = Scamps.Tools.Encrypt(retCookie.Value);
             retCookie.Expires = TimeTilExpires();
             return retCookie;
         }
@@ -87,7 +92,9 @@ namespace ircda.hobbes
         /// <returns>return a specific key from the cookie</return>
         public static string GetIrcdaCookieValue(HttpCookieCollection cookies, string key)
         {
-            HttpCookie retCookie = cookies[HttpUtility.HtmlEncode(IRCDACookieName)];         
+            HttpCookie retCookie = cookies[HttpUtility.HtmlEncode(IRCDACookieName)];
+            retCookie.Value = Tools.Decrypt(retCookie.Value);
+            //cookie values are decoded
             return retCookie.Values[HttpUtility.HtmlEncode(key)];
         }
         public static void RenewCookie(HttpCookieCollection cookies)

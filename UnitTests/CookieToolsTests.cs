@@ -25,12 +25,16 @@ namespace ircda.hobbes.Tests
 
             Assert.IsNotNull(testCookie, "Cookie is null");
             Assert.AreEqual(CookieTools.IRCDACookieName, HttpUtility.HtmlDecode(testCookie.Name), "Problem: Cookie name wrong");
-            Assert.AreEqual(testCookieValue, HttpUtility.HtmlDecode(testCookie.Value), "Problem: Cookie value wrong");
+            HttpCookieCollection coll = new HttpCookieCollection();
+            coll.Add(testCookie);
+            String actualValue = HttpUtility.HtmlDecode(CookieTools.GetIrcdaCookieValue(coll, "TestCookie with spaces"));
+            Assert.AreEqual(testCookieValue, actualValue, "Problem: Cookie value wrong");
 
             testCookie = null;
             //Test creating a cookie with no initial value
             testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, null);
             Assert.IsNotNull(testCookie, "Cookie is null");
+
             Assert.AreEqual(CookieTools.IRCDACookieName, HttpUtility.HtmlDecode(testCookie.Name), "Problem: Cookie name wrong");
             Assert.IsNull(testCookie.Value, "Problem: Cookie value wrong");
 

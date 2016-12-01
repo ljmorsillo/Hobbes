@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ircda.hobbes;
+using System.Text;
 
 
     public partial class _Default : System.Web.UI.Page
@@ -41,9 +42,16 @@ using ircda.hobbes;
                     string userID = CookieTools.GetIrcdaCookieValue(Request.Cookies, "UserID");
                     string cookieOut = string.Format("Cookie Name: {0}, Val: {1}, Expiration: {2}, UserID: {3}",
                         cookie.Name, cookie.Value, cookie.Expires, userID);
-
+                    StringBuilder kvout = new System.Text.StringBuilder();
+                    System.Collections.Specialized.NameValueCollection cookieValues = cookie.Values;
+                    
+                    foreach (string valuething in cookie.Values)
+                    {
+                        kvout.AppendFormat("Val:{0}{1}", valuething, System.Environment.NewLine);
+                    }
                     output = (TextBox)FindControl("TextOut");
-                    output.Text = output.Text + System.Environment.NewLine + cookieOut;
+                    output.Text = output.Text + System.Environment.NewLine + cookieOut + kvout.ToString();
+                    
                 }
             }
         }
