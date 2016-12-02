@@ -269,7 +269,7 @@ namespace ircda.hobbes
             int confidenceVal = 0;
             //Check if we have cookies and if we have our cookie
             //??? Will we ever want to check for other cookies?
-            if (CookieTools.HasCookie(context.Request.Cookies))
+            if (CookieTools.HasIRCDACookie(context.Request.Cookies))
             {
                 /*either High or PartialConfidence */
                 HttpCookie target = context.Request.Cookies[CookieTools.IRCDACookieName];
@@ -292,7 +292,8 @@ namespace ircda.hobbes
         private int calculateCookieConfidence(HttpCookie cookie)
         {
             int retVal = 0;
-            string userId = cookie[CookieTools.UserID];
+            
+            string userId = CookieTools.GetCookieValue(cookie, CookieTools.UserID); //$$$ Simplify this
             if (!string.IsNullOrEmpty(userId))
             {
                 UserManager mg = new UserManager();

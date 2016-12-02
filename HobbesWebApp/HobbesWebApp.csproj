@@ -219,7 +219,9 @@
     <Content Include="TestLogin.aspx" />
     <Content Include="UsersForm.aspx" />
     <Content Include="ViewSwitcher.ascx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Bundle.config" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
@@ -406,9 +408,7 @@
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\..\eportal\scamps\scamps\Scamps.csproj">
       <Project>{7f5304a3-565d-45b2-978d-5d9d214804f7}</Project>

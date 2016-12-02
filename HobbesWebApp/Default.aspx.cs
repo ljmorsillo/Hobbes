@@ -26,8 +26,8 @@ using System.Text;
         protected void SetCookiesInResponse_Click(object sender, EventArgs e)
         {
             HttpCookie cookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, "HobbesSession");
-            CookieTools.AddTo(cookie, "Session", "TestValue");
-            CookieTools.AddTo(cookie, CookieTools.UserID, "Tester");
+            cookie = CookieTools.AddTo(cookie, "Session", "TestValue");
+            cookie = CookieTools.AddTo(cookie, CookieTools.UserID, "Tester");
             Context.Response.Cookies.Add(cookie);
             //MakeButton.PostBackUrl = "~/default.aspx";
         }
