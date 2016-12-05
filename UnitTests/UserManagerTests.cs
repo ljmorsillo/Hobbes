@@ -31,10 +31,12 @@ namespace ircda.hobbes.Tests
         {
             uut = new UserManager();
             byte[] salt = uut.GenerateSalt();
-            string actualVal = uut.HashPassword("Welcome", salt);
+            string hashedPW = uut.HashPassword("Welcome", salt);
             string saltString = Convert.ToBase64String(salt);
             Assert.IsNotNull(saltString);
             Assert.IsTrue(salt.SequenceEqual(Convert.FromBase64String(saltString)));
+
+
         }
     }
 }

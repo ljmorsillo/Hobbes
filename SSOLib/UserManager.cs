@@ -94,6 +94,13 @@ namespace ircda.hobbes
 
             //Given we have data, verify secret
 
+            //get the hash and salt 
+
+            //hash the salt and the password passed in
+
+            //compare the hash in the db from the computed value
+
+
             // return appropriate information - including authmode
             //  -1 - uninitialized or undefined authentication profile
             //   0 - active directory user
@@ -181,15 +188,17 @@ namespace ircda.hobbes
             return ret;
         }
 
-        protected byte[] HashPasswordWithSalt(byte[] toBeHashed, byte[] salt)
+        public byte[] HashPasswordWithSalt(byte[] toBeHashed, byte[] salt)
         {
             using (var sha256 = SHA256.Create())
             {
                 var combinedHash = Combine(toBeHashed, salt);
-
                 return sha256.ComputeHash(combinedHash);
             }
         }
+
+
+
         /*
         public static int authenticateUser(string username, string password, out int authmode)
         {
