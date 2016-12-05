@@ -6,7 +6,7 @@
 	Db - SQL to get confidence config ranges & other config keys
 	Db - SQL to find existing & update | add session
 	Db - SQL to find user
-	Get general top to bottom scenario working - test returning no, med & high confidence
+ x	Get general top to bottom scenario working - test returning no, med & high confidence
 	Finish routing based on confidence - including enpoint processing callout
 	Network Context - add more to checks, more pieces of information like incoming address, whitelists
  x	Endpoint Context - define Db config for it
