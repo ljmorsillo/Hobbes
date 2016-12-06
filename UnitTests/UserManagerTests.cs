@@ -38,8 +38,8 @@ namespace ircda.hobbes.Tests
         {
             uut = new UserManager();
             uut.UpdateUserHash("Tester", "Welcome");
-
-            int result = uut.AuthenticateUser("Tester", "Welcome", 0);
+            int authmode = 0;
+            int result = uut.AuthenticateUser("Tester", "Welcome", out authmode);
         }
         [TestMethod()]
         public void CreateUserTest()
@@ -47,7 +47,8 @@ namespace ircda.hobbes.Tests
             uut = new UserManager();
             int result = uut.CreateNewUser("Tester", "Welcome");
 
-            result = uut.AuthenticateUser("Tester", "Welcome", 0);
+            int authmode = 0;
+            result = uut.AuthenticateUser("Tester", "Welcome", out authmode);
         }
 
     }

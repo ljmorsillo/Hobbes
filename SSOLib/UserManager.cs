@@ -20,6 +20,15 @@ namespace ircda.hobbes
         public static string SaltCol = "salt";
         public static string UsersTableName = "users";
 
+
+        public static readonly int USER_AUTHENTICATED = 0;
+        public static readonly int USER_NONEXISTENT = 1;
+        public static readonly int USER_NO_DATA = 2;
+        public static readonly int USER_PW_FAIL = 3;
+        public static readonly int USER_INACTIVE = 4;
+
+        public static readonly int USER_NOT_UNIQUE = 10;
+
         protected string provider;
         protected string connectionString;
 
@@ -28,7 +37,7 @@ namespace ircda.hobbes
         string getUserRecordQuery = "select * from users where username = @nametofind";
         string findUserQueryTok = "select username from users where username = '{0}';";
         string getHashQuery = "select hash, salt from users where username = @nametofind";
-        string getHashQueryTok = "select hash, salt from users where username = '{0}'";
+        string getHashQueryTok = "select * from users where username = '{0}'";
         string updateUserHashQueryTok = "update users set hash = '{0}', salt= '{1} where username = '{2}'";
 
 
@@ -78,12 +87,15 @@ namespace ircda.hobbes
         /// </summary>
         /// <param name="username">domain\user name or just name</param>
         /// <param name="password"></param>
-        /// <param name="authmode"></param>
+        /// <param name="authmode">
+        /// -1 - uninitialized or undefined authentication profile
+        ///  0 - active directory user
+        ///  1 - local database user</param>
         /// <returns> 0 - authenticated, 1 - user doesnt exist, 2 - user info populated but no data, 
         /// 3 - invalid password, 4 - user is set to inactive/no_access</returns>
-        public int AuthenticateUser(string username, string password, int authmode)
+        public int AuthenticateUser(string username, string password, out int authmode)
         {
-            int retval = -1; //Unintialized - undefined user
+            int retval = USER_NONEXISTENT; //Unintialized - undefined user
             authmode = -1;
             //Get the data first
             //$$$ Centalize this - without locking up a connection 
@@ -103,17 +115,35 @@ namespace ircda.hobbes
             {
                 return retval;
             }
+            //assume unique
             if (dt.rowcount == 1)
             {
                 results = dt.GetRowStrings();
             }
+            else
+            {
+                //TODO handle this situation - check email, 
+                return USER_NOT_UNIQUE; 
+            }
+            
+            //inactive?
+            if (!results["active"].Equals("Y", StringComparison.OrdinalIgnoreCase))
+            {
+                retval = USER_INACTIVE;
+            }
 
-            //TODO Handle no data && > 1 rows
-
+            //Active Directory returns....
+            authmode = results["authmode"].IsNullOrEmpty() ? -1 : Convert.ToInt32(results["authmode"]);
+             
+            if (authmode == -1 || string.IsNullOrEmpty(results["hash"]))
+            {
+                return USER_NO_DATA;
+            }
             //Given we have data, verify secret
             //get the hash and salt 
             string salt = results[SaltCol];
             byte[] saltAsBytes = Convert.FromBase64String(salt);
+
             string storedHash = results[HashCol];
             byte[] storedHashBytes = Convert.FromBase64String(storedHash);
 
@@ -126,14 +156,16 @@ namespace ircda.hobbes
             bool match = hashedPW.SequenceEqual(storedHashBytes);
 
             // return appropriate information - including authmode
-            //  -1 - uninitialized or undefined authentication profile
-            //   0 - active directory user
-            //   1 - local database user
+            //  
             if (match)
             {
-                retval = 1;
+                return USER_AUTHENTICATED; //authenticated
             }
-            //Active Directory returns....
+            else
+            {
+                return USER_PW_FAIL; //no match in local db
+            }
+            
             return retval;
         }
         /// <summary>
@@ -266,35 +298,5 @@ namespace ircda.hobbes
                 return sha256.ComputeHash(combinedHash);
             }
         }
-
-
-
-        /*
-        public static int authenticateUser(string username, string password, out int authmode)
-        {
-            //return codes
-            // 0 - authenticated, 1 - user doesnt exist, 2 - user info populated but no data, 3 - invalid password, 4 - user is set to inactive/no_access
-            authmode = -1;
-            var t = SCAMPstore.Get();
-
-            var provider = t.ADMIN_PROVIDER.FirstOrDefault(u => u.USER_NAME.ToLower() == username.ToLower());
-
-            if (provider == null)
-                return 1;
-            if (!provider.ACTIVE_STATUS.Equals("Y", StringComparison.OrdinalIgnoreCase) || provider.PROFILE_NAME.Equals("NO_ACCESS", StringComparison.OrdinalIgnoreCase))
-                return 4;
-            authmode = provider.AUTHENT_MODE.HasValue ? provider.AUTHENT_MODE.Value : -1;
-
-            if (authmode == -1 || string.IsNullOrEmpty(provider.PASSWORD_TXT))
-                return 2;
-
-            if (!BCrypt.Net.BCrypt.Verify(password, provider.PASSWORD_TXT))
-                return 3;
-
-            return 0;
-        }
-        */
-
-
     }
 }
