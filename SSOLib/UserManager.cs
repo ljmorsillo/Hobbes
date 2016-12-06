@@ -29,6 +29,7 @@ namespace ircda.hobbes
         string findUserQueryTok = "select username from users where username = '{0}';";
         string getHashQuery = "select hash, salt from users where username = @nametofind";
         string getHashQueryTok = "select hash, salt from users where username = '{0}'";
+        string updateUserHashQueryTok = "update users set hash = '{0}', salt= '{1} where username = '{2}'";
 
 
         public UserManager()
@@ -94,29 +95,45 @@ namespace ircda.hobbes
             string[] parameter = { "@username", username };
             //!!! What is wrong with parameterized query?
             //dt.GetResultSet(getUserRecordQuery, parameter);
-            dt.GetResultSet(string.Format(getHashQueryTok, username));
+            string query = string.Format(getHashQueryTok, username);
+            dt.GetResultSet(query);
+
             Dictionary<string, string> results = null;
+            if (dt.rowcount < 1)
+            {
+                return retval;
+            }
             if (dt.rowcount == 1)
             {
                 results = dt.GetRowStrings();
             }
+
             //TODO Handle no data && > 1 rows
 
             //Given we have data, verify secret
             //get the hash and salt 
             string salt = results[SaltCol];
-            
+            byte[] saltAsBytes = Convert.FromBase64String(salt);
+            string storedHash = results[HashCol];
+            byte[] storedHashBytes = Convert.FromBase64String(storedHash);
+
             //hash the salt and the password passed in
-            HashPasswordWithSalt(Convert.FromBase64String(password), Convert.FromBase64String(salt));
-
+            byte[] PWtoBeHashed = Encoding.ASCII.GetBytes(password);
+           
+            var hashedPW = HashPasswordWithSalt(PWtoBeHashed,saltAsBytes);
+            
             //compare the hash in the db from the computed value
-
+            bool match = hashedPW.SequenceEqual(storedHashBytes);
 
             // return appropriate information - including authmode
             //  -1 - uninitialized or undefined authentication profile
             //   0 - active directory user
             //   1 - local database user
-
+            if (match)
+            {
+                retval = 1;
+            }
+            //Active Directory returns....
             return retval;
         }
         /// <summary>
@@ -127,13 +144,24 @@ namespace ircda.hobbes
         /// <param name="password"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public int CreateNewUser(string username, string password, Dictionary<string,string>parameters = null)
+        public int CreateNewUser(string username, string password, bool noDuplicates = true, Dictionary<string,string>parameters = null)
         {
             int retval = -1;
             DataTools dt = new DataTools();
             dt.Provider = provider;
             dt.ConnectionString = connectionString;
             dt.OpenConnection();
+
+            string[] parameter = { UsernameCol, username };
+            //!!! What is wrong with parameterized query?
+            //dt.GetResultSet(findUserQuery, parameter);
+            dt.GetResultSet(string.Format(findUserQueryTok, username));
+            if (dt.rowcount > 0 && noDuplicates)
+            {
+                return retval;          //* EXIT
+            }
+            
+            //optionally to fill other fields via parameters
             Dictionary<string, string> items = null;
             if (parameters != null)
             {
@@ -152,7 +180,32 @@ namespace ircda.hobbes
             items.Add(SaltCol, saltString);
 
             string insertStatement = dt.InsertStatement(items,UsersTableName); ;
-
+            int result = dt.Insert(items, UsersTableName);
+            retval = result; //number of rows inserted...
+            return retval;
+        }
+        /// <summary>
+        /// Update a users hash and salt given a password
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public int UpdateUserHash(string username, string password)
+        {
+            int retval = -1;
+            DataTools dt = new DataTools();
+            dt.Provider = provider;
+            dt.ConnectionString = connectionString;
+            dt.OpenConnection();
+            Dictionary<string, string> items = new Dictionary<string, string>();
+            byte[] salt = GenerateSalt();
+            string saltString = Convert.ToBase64String(salt);
+            string hash = HashPassword(password, salt);
+            items.Add(HashCol, hash);
+            items.Add(SaltCol, saltString);
+            //TODO update to use userID (FindExactUser)
+            retval = dt.Update(items, UsersTableName, string.Format("{0}='{1}'", UsernameCol, username));            
             return retval;
         }
         ///$$$ This might better be in auth module
@@ -161,6 +214,12 @@ namespace ircda.hobbes
         /// </summary>
         /// <param name="password"></param>
         /// <returns></returns>
+        /// <remarks>Using a cryptographic password hash and salt which is a crypto random number. 
+        /// Take the password and and salt, hash them. Store hash and salt values.
+        /// Given a password, take salt from db and the given password and hash them. Compare to hash stored in db
+        /// If they match then the PW is correct.
+        /// Each user record has unique salt and it changes any time the stored hash is changed (like when the pw is changed)
+        /// Salting increases resistance to lookup table and rainbow table attacks</remarks>
         public string HashPassword(string password, byte[] salt)
         {
             string retval = "";

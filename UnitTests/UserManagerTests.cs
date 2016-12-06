@@ -19,14 +19,7 @@ namespace ircda.hobbes.Tests
             Dictionary<string, string> usersfound = uut.GetUser("TestUser");
         }
 
-        [TestMethod()]
-        public void AuthenticateUserTest()
-        {
-            uut = new UserManager();
-
-        }
-
-        [TestMethod()]
+                [TestMethod()]
         public void HashPasswordTest()
         {
             uut = new UserManager();
@@ -41,12 +34,21 @@ namespace ircda.hobbes.Tests
         }
 
         [TestMethod()]
-        public void AuthenticateUserTest1()
+        public void AuthenticateUserTest()
         {
             uut = new UserManager();
+            uut.UpdateUserHash("Tester", "Welcome");
+
             int result = uut.AuthenticateUser("Tester", "Welcome", 0);
-
-
         }
+        [TestMethod()]
+        public void CreateUserTest()
+        {
+            uut = new UserManager();
+            int result = uut.CreateNewUser("Tester", "Welcome");
+
+            result = uut.AuthenticateUser("Tester", "Welcome", 0);
+        }
+
     }
 }
