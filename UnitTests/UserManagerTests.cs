@@ -35,6 +35,16 @@ namespace ircda.hobbes.Tests
             string saltString = Convert.ToBase64String(salt);
             Assert.IsNotNull(saltString);
             Assert.IsTrue(salt.SequenceEqual(Convert.FromBase64String(saltString)));
+            System.Console.WriteLine("HPW: {0}, Salt: {1}", hashedPW, saltString);
+
+
+        }
+
+        [TestMethod()]
+        public void AuthenticateUserTest1()
+        {
+            uut = new UserManager();
+            int result = uut.AuthenticateUser("Tester", "Welcome", 0);
 
 
         }

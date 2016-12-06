@@ -27,6 +27,9 @@ namespace ircda.hobbes
         string findUserQuery = "select username from users where username = @nametofind;";
         string getUserRecordQuery = "select * from users where username = @nametofind";
         string findUserQueryTok = "select username from users where username = '{0}';";
+        string getHashQuery = "select hash, salt from users where username = @nametofind";
+        string getHashQueryTok = "select hash, salt from users where username = '{0}'";
+
 
         public UserManager()
         {
@@ -90,13 +93,21 @@ namespace ircda.hobbes
 
             string[] parameter = { "@username", username };
             //!!! What is wrong with parameterized query?
-            dt.GetResultSet(getUserRecordQuery, parameter);
+            //dt.GetResultSet(getUserRecordQuery, parameter);
+            dt.GetResultSet(string.Format(getHashQueryTok, username));
+            Dictionary<string, string> results = null;
+            if (dt.rowcount == 1)
+            {
+                results = dt.GetRowStrings();
+            }
+            //TODO Handle no data && > 1 rows
 
             //Given we have data, verify secret
-
             //get the hash and salt 
-
+            string salt = results[SaltCol];
+            
             //hash the salt and the password passed in
+            HashPasswordWithSalt(Convert.FromBase64String(password), Convert.FromBase64String(salt));
 
             //compare the hash in the db from the computed value
 
