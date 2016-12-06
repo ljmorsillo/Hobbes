@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Scamps;
 using System.Configuration;
 using System.Security.Cryptography;
+using System.DirectoryServices;
+using System.DirectoryServices.AccountManagement;
+using System.Web.Configuration;
 
 namespace ircda.hobbes
 {
@@ -216,6 +219,8 @@ namespace ircda.hobbes
             retval = result; //number of rows inserted...
             return retval;
         }
+
+
         /// <summary>
         /// Update a users hash and salt given a password
         /// </summary>
@@ -297,6 +302,85 @@ namespace ircda.hobbes
                 var combinedHash = Combine(toBeHashed, salt);
                 return sha256.ComputeHash(combinedHash);
             }
+        }
+    }
+    public class ADAuthenticator
+    {
+        const string ADloginFormat = "{0}\\{1}";
+        private string authDomain;
+        private string authorizedGroup;
+        private string ldapURL;
+        private List<string> domains;
+
+        public UserPrincipal currentADUser { get; internal set; }
+
+        public ADAuthenticator()
+        {
+
+            //Active Directory Authentication is configurable via web.config
+            authDomain = WebConfigurationManager.AppSettings.Get("LDAPauthgroupdomain");
+            authorizedGroup = WebConfigurationManager.AppSettings.Get("LDAPauthgroup");
+            ldapURL = WebConfigurationManager.AppSettings.Get("LDAPurl");
+            domains = WebConfigurationManager.AppSettings.Get("LDAPdomain").Split(',').ToList();
+        }
+
+        public int ADAuth(string username, string password, string domain)
+        {
+            if (!domains.Any(d => d.ToUpper() == domain.ToUpper()))
+                return 1;
+
+            var ADlogin = string.Format(ADloginFormat, domain, username);
+
+            //below is code provided by MSDN for authorizing against active directory ... it is quirky but they have justification for the implementation
+            var entry = new DirectoryEntry(this.ldapURL, ADlogin, password);
+            try
+            {
+                var objnative = entry.NativeObject;
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine("Error connecting to active directory: " + e.ToString());
+                return 3;
+            }
+            //thanks Bill Gates
+
+            var context = new PrincipalContext(ContextType.Domain, domain);
+            //var context = new PrincipalContext(ContextType.Domain, domain, username, password);
+            if (context.ValidateCredentials(username, password))
+            {
+                currentADUser = UserPrincipal.FindByIdentity(context, username);
+                if (isUserInGroup(username, password))
+                    return 0;
+                else
+                    return 2;
+            }
+            return 3;
+        }
+
+        private bool isUserInGroup(string username, string password)
+        {
+            if (string.IsNullOrEmpty(this.authDomain) || string.IsNullOrEmpty(this.authorizedGroup) || this.currentADUser == null)
+                return false;
+
+            bool foundUser = false;
+            using (var context = new PrincipalContext(ContextType.Domain, this.authDomain, username, password))
+            {
+                using (var group = GroupPrincipal.FindByIdentity(context, this.authorizedGroup))
+                {
+                    if (group != null)
+                    {
+                        // GetMembers(true) is recursive (groups-within-groups)
+                        // this is awful as it is a linear traversal but checking if user's membership with group membership doesn't work as intended for whatever reason
+                        foreach (var member in group.GetMembers(true))
+                        {
+                            foundUser = member.SamAccountName.Equals(username, StringComparison.OrdinalIgnoreCase);
+                            if (foundUser)
+                                break;
+                        }
+                    }
+                }
+            }
+            return foundUser;
         }
     }
 }
