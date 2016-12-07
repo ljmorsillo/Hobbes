@@ -3,25 +3,28 @@
  Done
  x	Db - get connection string to db working Db - Connection to SCAMPS 
  x	Db - create/update SQL to create Db and tables for users, sessions & configuration
-	Db - SQL to get confidence config ranges & other config keys
-	Db - SQL to find existing & update | add session
+ x	Db - SQL to find existing & update user 
  x	Db - SQL to find user
- x	Get general top to bottom scenario working - test returning no, med & high confidence
-	Finish routing based on confidence - including enpoint processing callout
-	Network Context - add more to checks, more pieces of information like incoming address, whitelists
+ x	Cookies - handling - Encrypt, decrypt cookies
+ x	Get general top to bottom confidence scenario working - test returning no, med & high confidence
+ x	User Management - User LEAD (ala CRUD) & tests
+	
  x	Endpoint Context - define Db config for it
-	IDisposable on ContextActions
-
-	Externalize SQL queries
+	Add full login challenge/resolution for localDb,AD, fall-through 
 	Cookie Context -  CookieTools, be sure to add configurable expirations....
-x	Cookies - handling - Encrypt, decrypt cookies
 	Cookies - SessionID, permission keys, tests & implementation
 	Cookies - example of timeout handling
-x	User Management - User LEAD (ala CRUD) & tests
-	Add full login challenge/resolution for localDb,AD, fall-through 
+
+	IDisposable on ContextActions
+	Whitelists table - out of Environment table
+	Externalize SQL queries
+	Db - SQL to get confidence config ranges & other config keys
+		
 	OAuth,OpenID hooks
 	Logging - both error passing and internal (audit) logging of user activities
-	Whitelists table - out of Environment table
+	Network Context - add more checks, more pieces of information like incoming address
+	Finish routing based on confidence - including endpoint processing callout
+	
 
 Scenarios
 ==================================================================================

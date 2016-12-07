@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authenticator.cs" />
+    <Compile Include="UserStatus.cs" />
     <Compile Include="CookieTools.cs" />
     <Compile Include="ContextCheck.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
