@@ -86,7 +86,7 @@ namespace ircda.hobbes
             return retVal;
         }
         /// <summary>
-        /// Given username & other information authenticate the user from local db
+        /// Given username and other information authenticate the user from local db
         /// </summary>
         /// <param name="username">domain\user name or just name</param>
         /// <param name="password"></param>
@@ -266,7 +266,7 @@ namespace ircda.hobbes
         /// Update a user
         /// </summary>
         /// <param name="username"></param>
-        /// <param name="parameters"> key value pairs of <columnname,value> strings</param>
+        /// <param name="parameters"> key value pairs of (columnname,value) strings</param>
         /// <returns>number of items changed</returns>
         public int UpdateUserData(string username,Dictionary<string,string> parameters)
         {

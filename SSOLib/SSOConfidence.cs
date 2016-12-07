@@ -10,7 +10,7 @@ namespace ircda.hobbes
     /// Confidence Level for SSO/RSO based on various forms of context evidence
     /// evaluated against external settings
     ///Gets the confidence settings from esternal configuration data 
-    //  Example: Confidence high = readConfigValue("HighConfidence") 
+    ///  Example: Confidence high = readConfigValue("HighConfidence") 
     /// partialChallenge=readConfigValue("PartialConfidence"), fullChallenge=readConfigValue("NoConfidence")
     /// </summary>
     public class SSOConfidence

@@ -19,6 +19,11 @@ namespace ircda.hobbes
     /// </summary>
     public static class ContextDriver
     {
+        /// <summary>
+        /// Apply all configured context checks for submittted context
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns>Confidence value</returns>
         public static SSOConfidence CheckConfidences(HttpContext context)
         {
             /***
@@ -55,6 +60,9 @@ namespace ircda.hobbes
     /// </summary>
     public class Id
     {
+        /// <summary>
+        /// Gratuitous field...
+        /// </summary>
         public string Name { get; set; }
     }
  
@@ -69,11 +77,11 @@ namespace ircda.hobbes
         /// <param name="context">The Http request needs to be here</param>
         /// <param name="confidenceIn">Allows "chaining" the calls and aggregating the confidence</param>
         /// <returns>New confidence value summarizing what was checked togheter with previous checks</returns>
-        SSOConfidence CheckRequest(HttpContext context,SSOConfidence confidenceIn);
-        /// <summary>
-        /// Each Context checker has it's own configuration key values
+        /// <remarks>Each Context checker has it's own configuration key values
         /// each ConfigKeys will get the specific keys for the context
-        /// </summary>
+        /// </remarks>
+        SSOConfidence CheckRequest(HttpContext context,SSOConfidence confidenceIn);
+
     }
     /// <summary>
     /// Actions which are same across all context checks 

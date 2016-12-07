@@ -104,7 +104,7 @@ namespace ircda.hobbes
         /// </summary>
         /// <param name="cookies"></param>
         /// <param name="key"></param>
-        /// <returns>return a specific key from the cookie</return>
+        /// <returns>return a specific key from the cookie</returns>
         public static string GetIrcdaCookieValue(HttpCookieCollection cookies, string key)
         {
             HttpCookie retCookie = cookies[HttpUtility.HtmlEncode(IRCDACookieName)];
