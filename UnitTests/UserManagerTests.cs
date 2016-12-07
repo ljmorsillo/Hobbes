@@ -60,5 +60,27 @@ namespace ircda.hobbes.Tests
             Assert.AreEqual(resultCreate, resultDelete, "Problem: create & delete are unequal");
 
         }
+
+        [TestMethod()]
+        public void UserStatusTest()
+        {
+            SSOConfidence conf = new SSOConfidence();
+            UserStatus uut = new UserStatus("Tester", false, CookieTools.MakeCookie("TestCookie", "TestValue"),
+                conf);
+            Assert.IsTrue(uut.Username.Equals("Tester"), "Problem: Username incorrect");
+            Assert.IsTrue(uut.IsSessionValid(), "Session Invalid"); 
+        }
+
+        [TestMethod()]
+        public void IsInRoleTest()
+        {
+
+        }
+
+        [TestMethod()]
+        public void IsSessionValidTest()
+        {
+
+        }
     }
 }
