@@ -19,7 +19,7 @@ namespace ircda.hobbes.Tests
             Dictionary<string, string> usersfound = uut.GetUser("TestUser");
         }
 
-                [TestMethod()]
+        [TestMethod()]
         public void HashPasswordTest()
         {
             uut = new UserManager();
@@ -51,5 +51,14 @@ namespace ircda.hobbes.Tests
             result = uut.AuthenticateUser("Tester", "Welcome", out authmode);
         }
 
+        [TestMethod()]
+        public void DeleteUserTest()
+        {
+            uut = new UserManager();
+            int resultCreate = uut.CreateNewUser("TestDelete", "Welcome");
+            int resultDelete = uut.DeleteUser("TestDelete");
+            Assert.AreEqual(resultCreate, resultDelete, "Problem: create & delete are unequal");
+
+        }
     }
 }

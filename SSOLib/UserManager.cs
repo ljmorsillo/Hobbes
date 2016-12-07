@@ -171,6 +171,7 @@ namespace ircda.hobbes
             
             return retval;
         }
+
         /// <summary>
         /// Create a new user - base level simple insertion
         /// uses salted hash for password authentication
@@ -214,7 +215,7 @@ namespace ircda.hobbes
             items.Add(HashCol, hash);
             items.Add(SaltCol, saltString);
 
-            string insertStatement = dt.InsertStatement(items,UsersTableName); ;
+            //string insertStatement = dt.InsertStatement(items,UsersTableName); ;
             int result = dt.Insert(items, UsersTableName);
             retval = result; //number of rows inserted...
             return retval;
@@ -245,6 +246,42 @@ namespace ircda.hobbes
             retval = dt.Update(items, UsersTableName, string.Format("{0}='{1}'", UsernameCol, username));            
             return retval;
         }
+        /// <summary>
+        /// Delete a user by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns>records deleted</returns>
+        public int DeleteUser(string username)
+        {
+            int retval = -1;
+            DataTools dt = new DataTools();
+            dt.Provider = provider;
+            dt.ConnectionString = connectionString;
+            dt.OpenConnection();
+
+            retval = dt.Delete(UsersTableName, string.Format("{0}='{1}'", UsernameCol, username));
+            return retval;
+        }
+        /// <summary>
+        /// Update a user
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="parameters"> key value pairs of <columnname,value> strings</param>
+        /// <returns>number of items changed</returns>
+        public int UpdateUserData(string username,Dictionary<string,string> parameters)
+        {
+            int retval = -1;
+            DataTools dt = new DataTools();
+            dt.Provider = provider;
+            dt.ConnectionString = connectionString;
+            dt.OpenConnection();
+
+            //TODO update to use userID (FindExactUser)
+            retval = dt.Update(parameters, UsersTableName, string.Format("{0}='{1}'", UsernameCol, username));
+            return retval;
+        }
+
+
         ///$$$ This might better be in auth module
         /// <summary>
         /// return salted hash of password
