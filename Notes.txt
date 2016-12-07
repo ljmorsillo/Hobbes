@@ -5,7 +5,7 @@
  x	Db - create/update SQL to create Db and tables for users, sessions & configuration
 	Db - SQL to get confidence config ranges & other config keys
 	Db - SQL to find existing & update | add session
-	Db - SQL to find user
+ x	Db - SQL to find user
  x	Get general top to bottom scenario working - test returning no, med & high confidence
 	Finish routing based on confidence - including enpoint processing callout
 	Network Context - add more to checks, more pieces of information like incoming address, whitelists
@@ -14,10 +14,10 @@
 
 	Externalize SQL queries
 	Cookie Context -  CookieTools, be sure to add configurable expirations....
-	Cookies - handling - Encrypt, decrypt cookies
+x	Cookies - handling - Encrypt, decrypt cookies
 	Cookies - SessionID, permission keys, tests & implementation
 	Cookies - example of timeout handling
-	User Management - User LEAD (ala CRUD) & tests
+x	User Management - User LEAD (ala CRUD) & tests
 	Add full login challenge/resolution for localDb,AD, fall-through 
 	OAuth,OpenID hooks
 	Logging - both error passing and internal (audit) logging of user activities
