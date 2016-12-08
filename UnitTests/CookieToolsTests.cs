@@ -112,6 +112,10 @@ namespace ircda.hobbes.Tests
         [TestMethod()]
         public void GetCookieValuesTest()
         {
+            HttpCookie testCookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, testCookieValue);
+            testCookie = CookieTools.AddTo(testCookie, "TestagainKey", "TestAgainValue");
+            Dictionary<string, string> res = CookieTools.GetCookieValues(testCookie);
+            Assert.AreEqual("TestAgainValue", res["TestagainKey"], "Problem:GetValues() incorrect value");
 
         }
 

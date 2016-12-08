@@ -119,14 +119,24 @@ namespace ircda.hobbes
         /// <returns>Dictionary of cookie key value pairs</returns>
         public static Dictionary<string, string> GetCookieValues(HttpCookie cookie)
         {
-            Dictionary<string, string> retval = null;
+            Dictionary<string, string> retval = new Dictionary<string, string>();
             if (cookie != null)
             {
-                retval = (Dictionary<string,string>)cookie.Values.ToDictionary();
+                cookie = CookieExtensions.DecryptCookie(cookie);
+                //make dictionary with decoded values
+                foreach (string key in cookie.Values )
+                {
+                    var val = cookie.Values[key];
+                    if (!key.IsNullOrEmpty())
+                        retval.Add(key, HttpUtility.HtmlDecode(val));
+                }
             }
-
             return retval;
         }
+        /// <summary>
+        /// Renew the IRCDA (Hobbes)specific cookie 
+        /// </summary>
+        /// <param name="cookies"></param>
         public static void RenewCookie(HttpCookieCollection cookies)
         {
             cookies[HttpUtility.HtmlEncode(IRCDACookieName)].Expires = TimeTilExpires();
