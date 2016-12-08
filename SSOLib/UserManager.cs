@@ -18,11 +18,14 @@ namespace ircda.hobbes
     /// </summary>
     public class UserManager
     {
+        ///<summary>Column name for username</summary>
         public static string UsernameCol = "username"; //!!! Use cleverer way to make easily configuarble...
+        ///<summary>Column name hash</summary>
         public static string HashCol = "hash";
+        ///<summary>Column name salt</summary>
         public static string SaltCol = "salt";
+        ///<summary>Table name for user information</summary>
         public static string UsersTableName = "users";
-
 
         public static readonly int USER_AUTHENTICATED = 0;
         public static readonly int USER_NONEXISTENT = 1;
@@ -32,7 +35,9 @@ namespace ircda.hobbes
 
         public static readonly int USER_NOT_UNIQUE = 10;
 
+        ///<summary>Datatools provider</summary>
         protected string provider;
+        ///<summary>Datatools connection string</summary>
         protected string connectionString;
 
         //$$$ extern the SQL
@@ -43,7 +48,10 @@ namespace ircda.hobbes
         string getHashQueryTok = "select * from users where username = '{0}'";
         string updateUserHashQueryTok = "update users set hash = '{0}', salt= '{1} where username = '{2}'";
 
-
+        /// <summary>
+        /// Responsible for tasks related to users and the DB, but not the UserStatus per-se
+        /// primarily Functional, should not hold state
+        /// </summary>
         public UserManager()
         {
             try
@@ -176,10 +184,11 @@ namespace ircda.hobbes
         /// Create a new user - base level simple insertion
         /// uses salted hash for password authentication
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
+        /// <param name="username">username</param>
+        /// <param name="password">cleartext password</param>
+        /// <param name="noDuplicates">Will we allow duplicates? Not usually...</param>
+        /// <param name="parameters">Additional parameters to save in user record as Key,value pairs key must match db colname</param>
+        /// <returns>numer of rows inserted or -1 means something bad happened</returns>
         public int CreateNewUser(string username, string password, bool noDuplicates = true, Dictionary<string,string>parameters = null)
         {
             int retval = -1;
@@ -229,7 +238,7 @@ namespace ircda.hobbes
         /// <param name="password"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public int UpdateUserHash(string username, string password)
+        public int UpdateUserHash(string username, string password, Dictionary<string,string>parameters = null)
         {
             int retval = -1;
             DataTools dt = new DataTools();
@@ -287,6 +296,7 @@ namespace ircda.hobbes
         /// return salted hash of password
         /// </summary>
         /// <param name="password"></param>
+        /// <param name="salt">Please use GenerateSalt()...</param>
         /// <returns></returns>
         /// <remarks>Using a cryptographic password hash and salt which is a crypto random number. 
         /// Take the password and and salt, hash them. Store hash and salt values.
@@ -331,7 +341,12 @@ namespace ircda.hobbes
 
             return ret;
         }
-
+        /// <summary>
+        /// Hash the password with salt (from GenerateSalt())
+        /// </summary>
+        /// <param name="toBeHashed">usually the cleartext password</param>
+        /// <param name="salt">should be cryptographic random number</param>
+        /// <returns>the hash - should be run through Base64Encoding separately</returns>
         public byte[] HashPasswordWithSalt(byte[] toBeHashed, byte[] salt)
         {
             using (var sha256 = SHA256.Create())
@@ -341,6 +356,9 @@ namespace ircda.hobbes
             }
         }
     }
+    /// <summary>
+    /// Tools and stuff to Authenticate against Active Directory
+    /// </summary>
     public class ADAuthenticator
     {
         const string ADloginFormat = "{0}\\{1}";
@@ -348,9 +366,11 @@ namespace ircda.hobbes
         private string authorizedGroup;
         private string ldapURL;
         private List<string> domains;
-
+        /// <summary>Utility property...</summary>
         public UserPrincipal currentADUser { get; internal set; }
-
+        /// <summary>
+        /// Constructor - inits from config file
+        /// </summary>
         public ADAuthenticator()
         {
 
@@ -360,7 +380,13 @@ namespace ircda.hobbes
             ldapURL = WebConfigurationManager.AppSettings.Get("LDAPurl");
             domains = WebConfigurationManager.AppSettings.Get("LDAPdomain").Split(',').ToList();
         }
-
+        /// <summary>
+        /// Take user info and authenticate
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <param name="domain"></param>
+        /// <returns>0 is happiness, greater than 0 various suckages </returns>
         public int ADAuth(string username, string password, string domain)
         {
             if (!domains.Any(d => d.ToUpper() == domain.ToUpper()))

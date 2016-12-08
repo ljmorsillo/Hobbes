@@ -29,8 +29,6 @@ namespace ircda.hobbes.Tests
             Assert.IsNotNull(saltString);
             Assert.IsTrue(salt.SequenceEqual(Convert.FromBase64String(saltString)));
             System.Console.WriteLine("HPW: {0}, Salt: {1}", hashedPW, saltString);
-
-
         }
 
         [TestMethod()]
@@ -40,7 +38,15 @@ namespace ircda.hobbes.Tests
             uut.UpdateUserHash("Tester", "Welcome");
             int authmode = 0;
             int result = uut.AuthenticateUser("Tester", "Welcome", out authmode);
+            Assert.IsTrue(result == UserManager.USER_AUTHENTICATED, "Problem: Auth Failed");
+            Assert.AreEqual(0, authmode, "Problem: authmode fail (!=0)");
         }
+        [TestMethod()]
+        public void UserAuthenticateTest()
+        {
+
+        }
+
         [TestMethod()]
         public void CreateUserTest()
         {
@@ -65,10 +71,19 @@ namespace ircda.hobbes.Tests
         public void UserStatusTest()
         {
             SSOConfidence conf = new SSOConfidence();
-            UserStatus uut = new UserStatus("Tester", false, CookieTools.MakeCookie("TestCookie", "TestValue"),
-                conf);
+            ///!!!Hobbes Cookie should be it's own thing....
+            System.Web.HttpCookie testCookie = CookieTools.MakeCookie("TestCookie", "TestValue");
+            string tte = CookieTools.NewExpiresTime(1).ToString();
+            testCookie = CookieTools.AddTo(testCookie, CookieTools.SessionExpires, tte);
+            UserStatus uut = new UserStatus("Tester", false, testCookie,conf);
+
             Assert.IsTrue(uut.Username.Equals("Tester"), "Problem: Username incorrect");
-            Assert.IsTrue(uut.IsSessionValid(), "Session Invalid"); 
+            Assert.IsTrue(uut.IsSessionValid(), "Problem: Session Time Invalid"); 
+            tte = CookieTools.NewExpiresTime(-3).ToString();
+            testCookie = CookieTools.SetCookieValue(testCookie, CookieTools.SessionExpires, tte);
+            uut.MyCookie = testCookie;
+            Assert.IsFalse(uut.IsSessionValid(), "Problem: Expired Time Fail");
+
         }
 
         [TestMethod()]

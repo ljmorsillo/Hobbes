@@ -1,4 +1,5 @@
-﻿///Submitted for review 2016-Nov-21
+﻿// CookieTools.cs 
+// Submitted for review 2016-Nov-21
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -10,26 +11,85 @@ using Scamps;
 
 namespace ircda.hobbes
 {
+    /// <summary>
+    /// Utility routine for our specific cookie needs
+    /// </summary>
     public class CookieTools
     {
-        /* ??? These should simple be getters and get inited elsewhere (YAGNI?) or const */
-        //$$$ Make this a HtmlString perhaps?
-        public static readonly string IRCDACookieName = "Ircda";
+        //??? Should these be simple  getters and get inited elsewhere (YAGNI?) or const
+        //$$$ Make these a HtmlString perhaps?
+        /// <summary>
+        /// The name of the cookie this library uses to shuttle information server-client 
+        /// </summary>
+        public static string HobbesCookieName = "Hobbes";
+        /// <summary>
+        /// key for User id in cookie
+        /// </summary>
         public static readonly string UserID = "user";
+        /// <summary>
+        /// key for role info in cookie
+        /// </summary>
         public static readonly string Role = "role";
+        /// <summary>
+        /// key for token info in cookie
+        /// </summary>
         public static readonly string Token = "token";
+        /// <summary>
+        /// key for Session expiration time in cookie
+        /// </summary>
+        public static readonly string SessionExpires = "SessExp";
+        /// <summary>
+        /// key for other active expiration time
+        /// </summary>
+        public static readonly string ActiveExpires = "ActExp";
 
+        /// <summary>
+        /// default number if hours added to cookie expiration 
+        /// </summary>
         public const int DefaultHoursToAdd = 72; //TODO: make this configurable
 
         /// <summary>
         /// Calulate new expiration time
         /// </summary>
         /// <returns>dateTime of updated expiration</returns>
-        public static DateTime TimeTilExpires(int hours = DefaultHoursToAdd)
+        public static DateTime NewExpiresTime(int hours = DefaultHoursToAdd)
         {
             DateTime retVal = DateTime.Now.AddHours(hours);
             return retVal;
-        } 
+        }
+        /// <summary>
+        /// Given an expiration time string, return how much time is left
+        /// </summary>
+        /// <returns>TimeSpan</returns>
+        public static TimeSpan TimeTilExpires(string expiresTime)
+        {
+            DateTime expiresDT = Convert.ToDateTime(expiresTime);
+            return TimeTilExpires(expiresDT);
+        }
+        /// <summary>
+        /// Given an expiration time DateTime, return TimeSpan how much time is left
+        /// </summary>
+        /// <returns>TimeSpan</returns>
+        public static TimeSpan TimeTilExpires(DateTime expiresTime)
+        {
+            //$$$ Assuming expiration is later than now
+            TimeSpan ts = expiresTime - DateTime.Now;
+            return ts;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentExpiration"></param>
+        /// <returns></returns>
+        public static DateTime UpdateTimeLeft(string currentExpiration)
+        {
+            //$$$ Validate param....currently trusting since this routine creates, but...
+            DateTime retval = Convert.ToDateTime(currentExpiration);
+
+
+            return retval;
+        }
         /// <summary>
         /// Checks for the presence of the IRCDA cookie
         /// </summary>
@@ -41,7 +101,7 @@ namespace ircda.hobbes
             if (cookies.Count >= 1)
             {
                 //do we have one of our cookies?
-                if (cookies[IRCDACookieName] != null) 
+                if (cookies[HobbesCookieName] != null) 
                     retVal = true;
             }
             return retVal;
@@ -52,13 +112,13 @@ namespace ircda.hobbes
         /// <param name="cookieName"></param>
         /// <param name="value">if provided, is the Value (or Values [0]of the cookie)</param>
         /// <returns>New Cookie, encrypted or null if no Cookie Name</returns>
-        public static HttpCookie MakeCookie(string cookieName, string value)
+        public static HttpCookie MakeCookie(string cookieName, string value=null)
         {
             HttpCookie retCookie = null;
             if (!string.IsNullOrEmpty(cookieName))
             {
                 retCookie = new HttpCookie(HttpUtility.HtmlEncode(cookieName));
-                retCookie.Expires = CookieTools.TimeTilExpires();
+                retCookie.Expires = CookieTools.NewExpiresTime();
                 if (!string.IsNullOrEmpty(value))
                 {
                     retCookie.Value = HttpUtility.HtmlEncode(value);
@@ -68,11 +128,12 @@ namespace ircda.hobbes
             return retCookie;
         }
         /// <summary>
-        /// Add subvalues to a cookie...
+        /// Add subvalues to a cookie...creates new KV pair if nonexistant
+        /// Adds additional values to key otherwise!
         /// </summary>
         /// <param name="cookie">Cookie to add kv pair to</param>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
+        /// <param name="key">key</param>
+        /// <param name="value">concatentaed values (if more than one)</param>
         /// <returns>new encrypted cookie with added value </returns>
         public static HttpCookie AddTo(HttpCookie cookie, string key, string value)
         {
@@ -82,7 +143,7 @@ namespace ircda.hobbes
             retCookie.Values.Add(key, value); //does this add duplicate keys?
             retCookie = CookieExtensions.EncryptCookie(retCookie);
             //Encrypted cookie
-            retCookie.Expires = TimeTilExpires();
+            retCookie.Expires = NewExpiresTime();
             return retCookie;
         }
 
@@ -100,14 +161,32 @@ namespace ircda.hobbes
             return retVal;
         }
         /// <summary>
+        /// Update a cookie key value pair
+        /// </summary>
+        /// <param name="cookie"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns>new encrypted cookie with updated key,value pair</returns>
+        public static HttpCookie SetCookieValue(HttpCookie cookie, string key, string value)
+        {
+            HttpCookie retCookie = CookieExtensions.DecryptCookie(cookie);
+            //Unencrypted cookie...
+            //Now the values can be manipulated
+            retCookie.Values[key] = value;  
+            retCookie = CookieExtensions.EncryptCookie(retCookie);
+            //Encrypted cookie
+            retCookie.Expires = NewExpiresTime();
+            return retCookie;
+        }
+        /// <summary>
         /// Get a particular value from the cookie
         /// </summary>
         /// <param name="cookies"></param>
         /// <param name="key"></param>
         /// <returns>return a specific key from the cookie</returns>
-        public static string GetIrcdaCookieValue(HttpCookieCollection cookies, string key)
+        public static string GetHobbesCookieValue(HttpCookieCollection cookies, string key)
         {
-            HttpCookie retCookie = cookies[HttpUtility.HtmlEncode(IRCDACookieName)];
+            HttpCookie retCookie = cookies[HttpUtility.HtmlEncode(HobbesCookieName)];
             retCookie = CookieExtensions.DecryptCookie(retCookie);
             //cookie values are decoded
             return retCookie.Values[HttpUtility.HtmlEncode(key)];
@@ -139,12 +218,15 @@ namespace ircda.hobbes
         /// <param name="cookies"></param>
         public static void RenewCookie(HttpCookieCollection cookies)
         {
-            cookies[HttpUtility.HtmlEncode(IRCDACookieName)].Expires = TimeTilExpires();
+            cookies[HttpUtility.HtmlEncode(HobbesCookieName)].Expires = NewExpiresTime();
         }
 
 
         
     }
+    /// <summary>
+    /// Should work as extension class as well 
+    /// </summary>
     public static class CookieExtensions
     {
         /// <summary>
@@ -171,7 +253,7 @@ namespace ircda.hobbes
         /// <returns>new encrypted cookie</returns>
         public static HttpCookie EncryptCookie(HttpCookie cookie)
         {
-            ///$$$do we want to leave the original untouched?
+            //$$$ Do we want to leave the original untouched?
             HttpCookie retCookie = Dupe(cookie);
             if (!string.IsNullOrEmpty(cookie.Value))
             {
@@ -186,7 +268,7 @@ namespace ircda.hobbes
         /// <returns>new decrypted cookie</returns>
         public static HttpCookie DecryptCookie(HttpCookie cookie)
         {
-            ///$$$ Do we want to leave the original untouched?
+            //$$$ Do we want to leave the original untouched?
             HttpCookie retCookie = Dupe(cookie);
             if (!string.IsNullOrEmpty(cookie.Value))
             {
@@ -204,7 +286,7 @@ namespace ircda.hobbes
     {
         IRCDACookie()
         {
-            HttpCookie cookie = CookieTools.MakeCookie(CookieTools.IRCDACookieName, null);
+            HttpCookie cookie = CookieTools.MakeCookie(CookieTools.HobbesCookieName, null);
         }
     }
 

@@ -19,7 +19,7 @@
     <Language>en-US</Language>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
-    <HelpFileFormat>OpenXml</HelpFileFormat>
+    <HelpFileFormat>MSHelpViewer</HelpFileFormat>
     <IndentHtml>False</IndentHtml>
     <KeepLogFile>True</KeepLogFile>
     <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
@@ -33,7 +33,7 @@
     <SyntaxFilters>C#</SyntaxFilters>
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <RootNamespaceContainer>False</RootNamespaceContainer>
-    <PresentationStyle>OpenXML</PresentationStyle>
+    <PresentationStyle>VS2013</PresentationStyle>
     <Preliminary>True</Preliminary>
     <NamingMethod>MemberName</NamingMethod>
     <HelpTitle>A Sandcastle Documented Class Library</HelpTitle>
@@ -46,34 +46,39 @@
     <BinaryTOC>True</BinaryTOC>
     <DocumentationSources>
       <DocumentationSource sourceFile="SSOLib\bin\Debug\SSO-RSO-Frmwrk.XML" />
-<DocumentationSource sourceFile="SSOLib\bin\Debug\SSO-RSO-Frmwrk.dll" /></DocumentationSources>
-    <VisibleItems>InheritedMembers, Protected, ProtectedInternalAsProtected, NoPIATypes</VisibleItems>
+      <DocumentationSource sourceFile="SSOLib\bin\Debug\SSO-RSO-Frmwrk.dll" />
+    </DocumentationSources>
+    <VisibleItems>InheritedMembers, ProtectedInternalAsProtected, NoPIATypes</VisibleItems>
     <ApiFilter>
       <Filter entryType="Namespace" fullName="ircda.hobbes" isExposed="True" xmlns="">
-  <Filter entryType="Class" fullName="ircda.hobbes.ContextActions" filterName="ContextActions" isExposed="False">
-    <Filter entryType="Constructor" fullName="ircda.hobbes.ContextActions.#ctor" filterName=".ctor" isExposed="True" />
-    <Filter entryType="Method" fullName="ircda.hobbes.ContextActions.AddUserToLocal" filterName="AddUserToLocal" isExposed="True" />
-    <Filter entryType="Method" fullName="ircda.hobbes.ContextActions.GetLocalUserID" filterName="GetLocalUserID" isExposed="True" />
-    <Filter entryType="Method" fullName="ircda.hobbes.ContextActions.InitConfigKeys" filterName="InitConfigKeys" isExposed="True" />
-  </Filter>
-  <Filter entryType="Class" fullName="ircda.hobbes.CookieTools" filterName="CookieTools" isExposed="True">
-    <Filter entryType="Constructor" fullName="ircda.hobbes.CookieTools.#ctor" filterName=".ctor" isExposed="False" />
-  </Filter>
-  <Filter entryType="Class" fullName="ircda.hobbes.EndpointContext" filterName="EndpointContext" isExposed="False">
-    <Filter entryType="Method" fullName="ircda.hobbes.EndpointContext.CheckRequest" filterName="CheckRequest" isExposed="True" />
-  </Filter>
-  <Filter entryType="Class" fullName="ircda.hobbes.Id" filterName="Id" isExposed="False">
-    <Filter entryType="Property" fullName="ircda.hobbes.Id.Name" filterName="Name" isExposed="True" />
-  </Filter>
-  <Filter entryType="Class" fullName="ircda.hobbes.SSOConfidence" filterName="SSOConfidence" isExposed="True">
-    <Filter entryType="Constructor" fullName="ircda.hobbes.SSOConfidence.#ctor" filterName=".ctor" isExposed="False" />
-  </Filter>
-  <Filter entryType="Class" fullName="ircda.hobbes.UserManager" filterName="UserManager" isExposed="True">
-    <Filter entryType="Field" fullName="ircda.hobbes.UserManager.connectionString" filterName="connectionString" isExposed="False" />
-    <Filter entryType="Field" fullName="ircda.hobbes.UserManager.provider" filterName="provider" isExposed="False" />
-  </Filter>
-</Filter>
+        <Filter entryType="Class" fullName="ircda.hobbes.ContextActions" filterName="ContextActions" isExposed="False">
+          <Filter entryType="Constructor" fullName="ircda.hobbes.ContextActions.#ctor" filterName=".ctor" isExposed="True" />
+          <Filter entryType="Method" fullName="ircda.hobbes.ContextActions.AddUserToLocal" filterName="AddUserToLocal" isExposed="True" />
+          <Filter entryType="Method" fullName="ircda.hobbes.ContextActions.GetLocalUserID" filterName="GetLocalUserID" isExposed="True" />
+          <Filter entryType="Method" fullName="ircda.hobbes.ContextActions.InitConfigKeys" filterName="InitConfigKeys" isExposed="True" />
+        </Filter>
+        <Filter entryType="Class" fullName="ircda.hobbes.CookieTools" filterName="CookieTools" isExposed="True">
+          <Filter entryType="Constructor" fullName="ircda.hobbes.CookieTools.#ctor" filterName=".ctor" isExposed="False" />
+        </Filter>
+        <Filter entryType="Class" fullName="ircda.hobbes.EndpointContext" filterName="EndpointContext" isExposed="False">
+          <Filter entryType="Method" fullName="ircda.hobbes.EndpointContext.CheckRequest" filterName="CheckRequest" isExposed="True" />
+        </Filter>
+        <Filter entryType="Class" fullName="ircda.hobbes.Id" filterName="Id" isExposed="False">
+          <Filter entryType="Property" fullName="ircda.hobbes.Id.Name" filterName="Name" isExposed="True" />
+        </Filter>
+        <Filter entryType="Class" fullName="ircda.hobbes.SSOConfidence" filterName="SSOConfidence" isExposed="True">
+          <Filter entryType="Constructor" fullName="ircda.hobbes.SSOConfidence.#ctor" filterName=".ctor" isExposed="False" />
+        </Filter>
+        <Filter entryType="Class" fullName="ircda.hobbes.UserManager" filterName="UserManager" isExposed="True">
+          <Filter entryType="Field" fullName="ircda.hobbes.UserManager.connectionString" filterName="connectionString" isExposed="False" />
+          <Filter entryType="Field" fullName="ircda.hobbes.UserManager.provider" filterName="provider" isExposed="False" />
+        </Filter>
+      </Filter>
     </ApiFilter>
+    <NamespaceSummaries>
+      <NamespaceSummaryItem name="(global)" isDocumented="False" xmlns="" />
+      <NamespaceSummaryItem name="ircda.hobbes" isDocumented="True" xmlns="">User Management Components live here</NamespaceSummaryItem>
+    </NamespaceSummaries>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->

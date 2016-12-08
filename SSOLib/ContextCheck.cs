@@ -1,7 +1,6 @@
-﻿///<summary>
-///Context Checks for Single-Signon, Reduced Sign on
-///Submitted for review 2016-Nov-21 please start with ContextDriver to see overall flow
-///</summary>
+﻿// ContextCheck.cs Objects related to checking HTTP connection context & determining user trust 
+// Submitted for review 2016-Nov-21 please start with ContextDriver to see overall flow
+
 using System;
 using System.Collections.Generic;
 using System.Web;
@@ -15,6 +14,7 @@ namespace ircda.hobbes
 {
 
     /// <summary>
+    /// Context Checks for Single-Signon, Reduced Sign on
     /// Driver object to call confidence pieces....
     /// </summary>
     public static class ContextDriver
@@ -44,12 +44,12 @@ namespace ircda.hobbes
             {
                 cumulativeConfidence = check.CheckRequest(context, cumulativeConfidence);
             }
-            /** Get the confidence settings from the configuration file **/
-            //Confidence high = readConfigValue("HighConfidence") partialChallenge = readConfigValue("PartialConfidence"), 
+            //$$$ Get the confidence settings from the configuration file
+            // Confidence high = readConfigValue("HighConfidence") partialChallenge = readConfigValue("PartialConfidence"), 
             //  fullChallenge == readConfigValue("NoConfidence")
-            /* following provides route to failed login, partial login, full login */
-            // EvaluateConfidenceRules()    
-            // RouteBasedOnConfidence()
+            // following provides route to failed login, partial login, full login */
+            //$$$ NiceToHave EvaluateConfidenceRules()    
+            //$$$ NiceToHave RouteBasedOnConfidence()
             return cumulativeConfidence;
         }
     }
@@ -66,7 +66,9 @@ namespace ircda.hobbes
         public string Name { get; set; }
     }
  
-
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IContextChecker
     {
         /// <summary>
@@ -88,15 +90,20 @@ namespace ircda.hobbes
     /// </summary>
     public class ContextActions
     {
-        //public DBadapter db;
-    
+        ///<summary>The handy datatools object</summary>
         public DataTools dt;
         ///<summary> ConfigKeys is a context dependent list of KV pairs which allow flexibility
         ///defining confidence ranges, endpoint expressions and other configurable values
         ///</summary>
         protected List<KeyValuePair<string,string>> ConfigKeys { get; set; }
+        
+        ///<summary>datatools object wants this</summary>
         public string provider;
+        ///<summary>datatools object wants this</summary>
         public string connectionString;
+        /// <summary>
+        /// Concrete class for ContextChecker's to derive some basic functionality from
+        /// </summary>
         public ContextActions()
         {
             try
@@ -166,6 +173,11 @@ namespace ircda.hobbes
 
             return retVal;
         }
+        /// <summary>
+        /// If we get a new user and want to add to local db...
+        /// </summary>
+        /// <param name="userToAdd"></param>
+        /// <returns></returns>
         public string AddUserToLocal(Id userToAdd)
         {
             string retVal = null;
@@ -179,12 +191,18 @@ namespace ircda.hobbes
     /// </summary>
     public class EndpointContext : ContextActions, IContextChecker
     {
-        protected Regex simpleEndpointRE = new Regex(@".*/$");
+        ///<summary>regex for simple endpoint definitions</summary>
+        protected Regex simpleEndpointRE = new Regex(@".*/$");              //$$$Externalize
+
+        /// <summary>
+        /// This is to checks request http context and evaluate if the endpoint allows RSO or 
+        /// special handling
+        /// </summary>
         public EndpointContext() : base()
         {
-            ///TODO read from DB
-            ///Select "WhitelistEndpoints" from DB
-            string query = "select value from environment where name like '%Whitelist-endpoint'"; ///$$$ Remove to external file
+            //TODO read from DB
+            //Select "WhitelistEndpoints" from DB
+            string query = "select value from environment where name like '%Whitelist-endpoint'"; //$$$ Remove to external file
             using (var db = new Scamps.DataTools(System.Configuration.ConfigurationManager.ConnectionStrings["SCAMPs"]))
             {
                 db.GetResultSet(query);
@@ -242,9 +260,9 @@ namespace ircda.hobbes
                 return true; //Restructure....
             }
 
-            ///Whitelist check
-            /// pull out scheme and check if in whitelist - foreach (item in whitelist){}
-            /// later: gethostbyname() and check addresses...
+            // Whitelist check
+            //  pull out scheme and check if in whitelist - foreach (item in whitelist){}
+            // later: gethostbyname() and check addresses...
             requestedURL = context.Request.Url.Host + context.Request.Url.AbsolutePath;
             //list the endpoints to search
             var endpointlist = from key in ConfigKeys
@@ -262,13 +280,25 @@ namespace ircda.hobbes
             return retVal;
         }
     }
+    /// <summary>
+    /// The object responsible for determining if we trust requestor based on existing cookie 
+    /// </summary>
     public class CookieContext : ContextActions, IContextChecker
     {
+        /// <summary>
+        /// Consruct a Cookie Context
+        /// </summary>
         public CookieContext() : base()
         {   
             // anything to do here?
             // What are the config keys here?
         }
+        /// <summary>
+        /// Check for existence and then content of our cookie and the information contained therein
+        /// </summary>
+        /// <param name="context">the HTTP context object of this request</param>
+        /// <param name="confidenceIn">Accumulating the confidence values</param>
+        /// <returns></returns>
         public SSOConfidence CheckRequest(HttpContext context, SSOConfidence confidenceIn)
         {
             SSOConfidence retval = CheckInputs(context,confidenceIn);
@@ -280,7 +310,7 @@ namespace ircda.hobbes
             if (CookieTools.HasIRCDACookie(context.Request.Cookies))
             {
                 /*either High or PartialConfidence */
-                HttpCookie target = context.Request.Cookies[CookieTools.IRCDACookieName];
+                HttpCookie target = context.Request.Cookies[CookieTools.HobbesCookieName];
                 confidenceVal = calculateCookieConfidence(target);         
             }
             else
@@ -316,11 +346,11 @@ namespace ircda.hobbes
             }
             return retVal;
         }
-
-        /// <summary>
-        /// Get the specific configuration key value pairs for this type
-        /// </summary>
     }
+    /// <summary>
+    /// Checker for Network Context 
+    /// Look at network source check against whitelist/blacklist
+    /// </summary>
     class NetworkContext : ContextActions, IContextChecker
     {
         private string query = "select value from environment where name like '%Whitelist-network'"; ///$$$ Remove to external file

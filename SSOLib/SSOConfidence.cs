@@ -1,4 +1,4 @@
-﻿///Confidence object - this is initially simple - submitted for review 2016-Nov-21
+﻿// Confidence object - this is initially simple - submitted for review 2016-Nov-21
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +15,19 @@ namespace ircda.hobbes
     /// </summary>
     public class SSOConfidence
     {
+        ///<summary> No confidence simple value</summary>
         public static readonly int NoConfidence = 0;
+        ///<summary> Complete confidence simple value</summary>
         public static readonly int CompleteConfidence = 100;
-        
-        public static readonly string BadRequest = "badrequest";
-        public static readonly string ProcessEndpoint = "processendpoint";
 
+        ///<summary>Action value</summary>
+        public static readonly string BadRequest = "badrequest";
+        ///<summary>Action Value trigger endpoint processing </summary>
+        public static readonly string ProcessEndpoint = "processendpoint";
+        ///<summary>Simple Value for confidence - no ranging</summary>
         public int SimpleValue { get; set; }
+
+        ///<summary>Return the Action string - COULD BE NULL</summary>
         public string Action { get; set; }
         /// <summary>
         /// No default empty constructor, must supply a value to start.
@@ -30,11 +36,16 @@ namespace ircda.hobbes
         protected SSOConfidence()
         {
         }
+        /// <summary>
+        /// Copy Constructor - Be sure to add any new properties/fields!!!
+        /// </summary>
+        /// <param name="confidenceIn"></param>
         public SSOConfidence(SSOConfidence confidenceIn)
         {
             SimpleValue = confidenceIn.SimpleValue;
             Action = confidenceIn.Action;
         }
+        ///<summary>Initialized with simple confidence value, default:No-Confidence</summary>
         public SSOConfidence(int initialConfidence = 0)
         {
             SimpleValue = initialConfidence;

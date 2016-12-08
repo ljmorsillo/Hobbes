@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+
 namespace ircda.hobbes
 {
     /// <summary>
@@ -21,7 +22,7 @@ namespace ircda.hobbes
         /// </summary>
         public bool Authenticated { get; set; }
         ///<summary>
-        ///IRCDA Cookie reference
+        ///IRCDA Cookie reference (encrypted)
         /// </summary>
         public HttpCookie MyCookie { get; set; }
         ///<summary>
@@ -32,9 +33,12 @@ namespace ircda.hobbes
         Dictionary<string, string> userData = new Dictionary<string,string>();
 
         /// <summary>
-        ///Create a user status with the authentication 
+        ///Create a user status with the authentication state and cookie 
         /// </summary>
+        /// <param name="username"></param>
         /// <param name="authenticated"></param>
+        /// <param name="cookie"></param>
+        /// <param name="confidence"></param>
         public UserStatus(string username, bool authenticated, HttpCookie cookie, SSOConfidence confidence)
         {
             Authenticated = authenticated;
@@ -57,13 +61,26 @@ namespace ircda.hobbes
 
             return retval;
         }
-
+        ///<summary>Quick check if we have run past any expirations we are carrying around...</summary>
         public bool IsSessionValid()
         {
             bool retval = false;
+            //Check times
+            string sessionExpires = CookieTools.GetCookieValue(MyCookie, CookieTools.SessionExpires);
+            //if session expiration is not defined - it's false, it's required
+            if (string.IsNullOrEmpty(sessionExpires))
+            {
+                return retval;
+            }
+            DateTime sessionDT= Convert.ToDateTime(sessionExpires);
+            TimeSpan sessionTS = CookieTools.TimeTilExpires(sessionDT);
+            if (sessionTS > new TimeSpan(0))
+                retval = true; 
+            //other tests that define valid session?
 
             return retval;
         }
+        ///<summary>Return a dictionary of user data - retruns the db columns and data as key val pairs </summary>
         public Dictionary<string,string> UserData()
         {
             //??? What are error conditions at this point

@@ -17,7 +17,7 @@ namespace ircda.hobbes.Tests
         [TestMethod()]
         public void CheckRequestTest()
         {
-            request.Cookies.Add(CookieTools.MakeCookie(CookieTools.IRCDACookieName, "testValue"));
+            request.Cookies.Add(CookieTools.MakeCookie(CookieTools.HobbesCookieName, "testValue"));
             HttpContext testContext = new HttpContext(request, response);
 
             IContextChecker uot = new ircda.hobbes.CookieContext();
