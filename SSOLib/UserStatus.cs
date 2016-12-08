@@ -11,9 +11,22 @@ namespace ircda.hobbes
     /// </summary>
     public class UserStatus
     {
+        /// <summary>
+        /// Confidence for this user for this session if calculated
+        /// </summary>
+
         public SSOConfidence Confidence { get; set; }
+        ///<summary>
+        ///True if authenticated
+        /// </summary>
         public bool Authenticated { get; set; }
+        ///<summary>
+        ///IRCDA Cookie reference
+        /// </summary>
         public HttpCookie MyCookie { get; set; }
+        ///<summary>
+        ///Username used a lot
+        /// </summary>
         public String Username { get; set; }
 
         Dictionary<string, string> userData = new Dictionary<string,string>();

@@ -112,10 +112,27 @@ namespace ircda.hobbes
             //cookie values are decoded
             return retCookie.Values[HttpUtility.HtmlEncode(key)];
         }
+        /// <summary>
+        /// Return all cookie values as a dictionary
+        /// </summary>
+        /// <param name="cookie"></param>
+        /// <returns>Dictionary of cookie key value pairs</returns>
+        public static Dictionary<string, string> GetCookieValues(HttpCookie cookie)
+        {
+            Dictionary<string, string> retval = null;
+            if (cookie != null)
+            {
+                retval = (Dictionary<string,string>)cookie.Values.ToDictionary();
+            }
+
+            return retval;
+        }
         public static void RenewCookie(HttpCookieCollection cookies)
         {
             cookies[HttpUtility.HtmlEncode(IRCDACookieName)].Expires = TimeTilExpires();
         }
+
+
         
     }
     public static class CookieExtensions
