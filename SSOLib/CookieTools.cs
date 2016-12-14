@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using Scamps;
+using ircda.hobbes;
 
 namespace ircda.hobbes
 {
@@ -219,10 +220,7 @@ namespace ircda.hobbes
         public static void RenewCookie(HttpCookieCollection cookies)
         {
             cookies[HttpUtility.HtmlEncode(HobbesCookieName)].Expires = NewExpiresTime();
-        }
-
-
-        
+        }      
     }
     /// <summary>
     /// Should work as extension class as well 

@@ -289,8 +289,22 @@ namespace ircda.hobbes
             retval = dt.Update(parameters, UsersTableName, string.Format("{0}='{1}'", UsernameCol, username));
             return retval;
         }
+        /// <summary>
+        /// true if user login has expired
+        /// </summary>
+        /// <returns></returns>
+        public bool Expired()
+        {
+            bool retVal = true;
 
+            return retVal;
+        }
 
+        public Dictionary<string,string>GetSmartAuths()
+        {
+
+            return null;
+        }
         ///$$$ This might better be in auth module
         /// <summary>
         /// return salted hash of password
