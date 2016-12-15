@@ -71,7 +71,7 @@ namespace ircda.hobbes.Tests
         public void UserStatusTest()
         {
             SSOConfidence conf = new SSOConfidence();
-            ///!!!Hobbes Cookie should be it's own thing....
+
             System.Web.HttpCookie testCookie = CookieTools.MakeCookie("TestCookie", "TestValue");
             string tte = CookieTools.NewExpiresTime(1).ToString();
             testCookie = CookieTools.AddTo(testCookie, CookieTools.SessionExpires, tte);
@@ -85,12 +85,20 @@ namespace ircda.hobbes.Tests
             Assert.IsFalse(uut.IsSessionValid(), "Problem: Expired Time Fail");
 
         }
-
         [TestMethod()]
         public void IsInRoleTest()
         {
+            SSOConfidence conf = new SSOConfidence();
+           
+            System.Web.HttpCookie testCookie = CookieTools.MakeCookie("TestCookie", "TestValue");
+            string tte = CookieTools.NewExpiresTime(1).ToString();
+            testCookie = CookieTools.AddTo(testCookie, CookieTools.SessionExpires, tte);
+            testCookie = CookieTools.AddTo(testCookie, CookieTools.Roles, "NO_ACCESS");
+            UserStatus uut = new UserStatus("Tester", false, testCookie, conf);
+            Assert.IsTrue(uut.IsInRole("NO_ACCESS"), "Problem: IsInRole False");
 
         }
+
 
         [TestMethod()]
         public void IsSessionValidTest()

@@ -58,7 +58,22 @@ namespace ircda.hobbes
         public bool IsInRole(string rolename)
         {
             bool retval = false;
-
+            string role = CookieTools.GetCookieValue(MyCookie, CookieTools.Roles);
+            if (string.IsNullOrEmpty(rolename))
+            {
+                return retval; //false, no null roles
+            }
+            //possible that role is in one of two places
+            //return first match
+            if (!string.IsNullOrEmpty(role))
+            {
+                retval = role.Equals(rolename);
+                return retval;
+            }
+            if (userData.ContainsKey(CookieTools.Roles))
+            {
+                retval = userData.Contains(new KeyValuePair<string,string>(CookieTools.Roles, role));
+            }
             return retval;
         }
         ///<summary>Quick check if we have run past any expirations we are carrying around...</summary>

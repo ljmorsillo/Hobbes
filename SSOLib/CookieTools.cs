@@ -30,7 +30,7 @@ namespace ircda.hobbes
         /// <summary>
         /// key for role info in cookie
         /// </summary>
-        public static readonly string Role = "role";
+        public static readonly string Roles = "role";
         /// <summary>
         /// key for token info in cookie
         /// </summary>
@@ -38,12 +38,15 @@ namespace ircda.hobbes
         /// <summary>
         /// key for Session expiration time in cookie
         /// </summary>
-        public static readonly string SessionExpires = "SessExp";
+        public static readonly string SessionExpires = "sessExp";
         /// <summary>
         /// key for other active expiration time
         /// </summary>
-        public static readonly string ActiveExpires = "ActExp";
-
+        public static readonly string ActiveExpires = "actExp";
+        /// <summary>
+        /// key for access keys in cookie
+        /// </summary>
+        public static readonly string AccessKeys = "acckey";
         /// <summary>
         /// default number if hours added to cookie expiration 
         /// </summary>
@@ -78,19 +81,7 @@ namespace ircda.hobbes
             return ts;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="currentExpiration"></param>
-        /// <returns></returns>
-        public static DateTime UpdateTimeLeft(string currentExpiration)
-        {
-            //$$$ Validate param....currently trusting since this routine creates, but...
-            DateTime retval = Convert.ToDateTime(currentExpiration);
-
-
-            return retval;
-        }
+       
         /// <summary>
         /// Checks for the presence of the IRCDA cookie
         /// </summary>
