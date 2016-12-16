@@ -105,12 +105,19 @@ namespace ircda.hobbes.Tests
         {
 
         }
-
+        /// <summary>
+        /// Simple smoke test
+        /// full positive test requires testing in AD domain with username and password
+        /// </summary>
         [TestMethod()]
         public void ADAuthenticatorTest()
         {
             ADAuthenticator uut = new ADAuthenticator();
             Assert.IsNotNull(uut,"Problem: ADAuthenticator not created");
+
+            int res = uut.ADAuth("ch185879", "buzzard", "cardio.chboston.org");
+            Assert.IsTrue(res > 0, "Problem: ADAuth should be greater than 0");
+
         }
     }
 }
