@@ -179,7 +179,41 @@ namespace ircda.hobbes
             
             return retval;
         }
-
+        /// <summary>
+        /// Given a user with a given confidence, an authentication and role, 
+        /// return a value for the access keys currently allowed
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="authenticated"></param>
+        /// <param name="confidence"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        public int AuthorizeUserRequest(string username, bool authenticated, SSOConfidence confidence, string reqRole)
+        {
+            int retVal = 0;
+            Dictionary<string, string> userData = GetUser(username); //Data from DB
+            UserStatus useStat = new UserStatus(username, authenticated, null, confidence);
+            //check authentication
+            if (!authenticated)
+            {
+                return retVal;
+            }
+            //check roles in DB against requested role
+            if (!userData["role"].Equals(reqRole))
+            {
+                return retVal;
+            } 
+            //should this routine handle adminstrative levels and access keys
+            else if ((confidence.SimpleValue <= SSOConfidence.CompleteConfidence) && 
+                confidence.SimpleValue > SSOConfidence.NoConfidence)
+            {
+                retVal = 1;
+            }
+            // 0 = request denied
+            // 1 = lowest authorization give requested role only
+            // 2 = give requested role and add to other roles
+            return retVal; 
+        }
         /// <summary>
         /// Create a new user - base level simple insertion
         /// uses salted hash for password authentication

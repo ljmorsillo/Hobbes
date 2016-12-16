@@ -132,12 +132,34 @@ namespace ircda.hobbes
             HttpCookie retCookie = CookieExtensions.DecryptCookie(cookie);
             //Unencrypted cookie...
             //Now the values can be manipulated
-            retCookie.Values.Add(key, value); //does this add duplicate keys?
+            retCookie.Values.Add(key, value); //this can add duplicate and additional values to a key
             retCookie = CookieExtensions.EncryptCookie(retCookie);
             //Encrypted cookie
             retCookie.Expires = NewExpiresTime();
             return retCookie;
         }
+
+        /// <summary>
+        /// Add a list of KV pairs to our cookie
+        /// </summary>
+        /// <param name="cookie"></param>
+        /// <param name="valuesDict"></param>
+        /// <returns></returns>
+        public static HttpCookie AddTo(HttpCookie cookie, Dictionary<string, string> valuesDict)
+        {
+            HttpCookie retCookie = CookieExtensions.DecryptCookie(cookie);
+            //Unencrypted cookie...
+            //Now the values can be manipulated
+            foreach (var item in valuesDict)
+            {
+                retCookie.Values.Add(item.Key, item.Value); 
+            }
+            retCookie = CookieExtensions.EncryptCookie(retCookie);
+            //Encrypted cookie
+            retCookie.Expires = NewExpiresTime();
+            return retCookie;
+        }
+
 
         /// <summary>
         /// Get value from a SCAMPS encrypted cookie 
@@ -171,7 +193,7 @@ namespace ircda.hobbes
             return retCookie;
         }
         /// <summary>
-        /// Get a particular value from the cookie
+        /// Get a particular value from the Hobbes cookie in the cookie collection
         /// </summary>
         /// <param name="cookies"></param>
         /// <param name="key"></param>
