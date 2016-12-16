@@ -75,10 +75,10 @@ namespace ircda.hobbes.Tests
             System.Web.HttpCookie testCookie = CookieTools.MakeCookie("TestCookie", "TestValue");
             string tte = CookieTools.NewExpiresTime(1).ToString();
             testCookie = CookieTools.AddTo(testCookie, CookieTools.SessionExpires, tte);
-            UserStatus uut = new UserStatus("Tester", false, testCookie,conf);
+            UserStatus uut = new UserStatus("Tester", false, testCookie, conf);
 
             Assert.IsTrue(uut.Username.Equals("Tester"), "Problem: Username incorrect");
-            Assert.IsTrue(uut.IsSessionValid(), "Problem: Session Time Invalid"); 
+            Assert.IsTrue(uut.IsSessionValid(), "Problem: Session Time Invalid");
             tte = CookieTools.NewExpiresTime(-3).ToString();
             testCookie = CookieTools.SetCookieValue(testCookie, CookieTools.SessionExpires, tte);
             uut.MyCookie = testCookie;
@@ -89,7 +89,7 @@ namespace ircda.hobbes.Tests
         public void IsInRoleTest()
         {
             SSOConfidence conf = new SSOConfidence();
-           
+
             System.Web.HttpCookie testCookie = CookieTools.MakeCookie("TestCookie", "TestValue");
             string tte = CookieTools.NewExpiresTime(1).ToString();
             testCookie = CookieTools.AddTo(testCookie, CookieTools.SessionExpires, tte);
@@ -104,6 +104,13 @@ namespace ircda.hobbes.Tests
         public void IsSessionValidTest()
         {
 
+        }
+
+        [TestMethod()]
+        public void ADAuthenticatorTest()
+        {
+            ADAuthenticator uut = new ADAuthenticator();
+            Assert.IsNotNull(uut,"Problem: ADAuthenticator not created");
         }
     }
 }

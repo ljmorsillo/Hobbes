@@ -150,6 +150,8 @@ namespace ircda.hobbes
             {
                 return USER_NO_DATA;
             }
+
+
             //Given we have data, verify secret
             //get the hash and salt 
             string salt = results[SaltCol];
@@ -421,12 +423,20 @@ namespace ircda.hobbes
         /// </summary>
         public ADAuthenticator()
         {
-
+            string rawDomains = null;
             //Active Directory Authentication is configurable via web.config
             authDomain = WebConfigurationManager.AppSettings.Get("LDAPauthgroupdomain");
             authorizedGroup = WebConfigurationManager.AppSettings.Get("LDAPauthgroup");
             ldapURL = WebConfigurationManager.AppSettings.Get("LDAPurl");
-            domains = WebConfigurationManager.AppSettings.Get("LDAPdomain").Split(',').ToList();
+            rawDomains = WebConfigurationManager.AppSettings.Get("LDAPdomain");
+            if (string.IsNullOrEmpty(authDomain))
+            {
+                authDomain = System.Configuration.ConfigurationManager.AppSettings.Get("LDAPauthgroupdomain");
+                authorizedGroup = System.Configuration.ConfigurationManager.AppSettings.Get("LDAPauthgroup");
+                ldapURL = System.Configuration.ConfigurationManager.AppSettings.Get("LDAPurl");
+                rawDomains = System.Configuration.ConfigurationManager.AppSettings.Get("LDAPdomain");
+            }
+            domains = rawDomains.Split(',').ToList();
         }
         /// <summary>
         /// Take user info and authenticate
