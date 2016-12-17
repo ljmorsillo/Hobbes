@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Web.Configuration;
+using System.Web;
 
 namespace ircda.hobbes
 {
@@ -185,18 +186,16 @@ namespace ircda.hobbes
         /// Given a user with a given confidence, an authentication and role, 
         /// return a value for the access keys currently allowed
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="authenticated"></param>
-        /// <param name="confidence"></param>
-        /// <param name="role"></param>
+        ///<param name="userStat"></param>
+        /// <param name="reqRole"></param>
         /// <returns></returns>
-        public int AuthorizeUserRequest(string username, bool authenticated, SSOConfidence confidence, string reqRole)
+        public int AuthenticateRequestedRole(UserStatus userStat, string reqRole)
         {
             int retVal = 0;
-            Dictionary<string, string> userData = GetUser(username); //Data from DB
-            UserStatus useStat = new UserStatus(username, authenticated, null, confidence);
+            Dictionary<string, string> userData = GetUser(userStat.Username); //Data from DB
+            ///UserStatus useStat = new UserStatus(username, authenticated, null, confidence);
             //check authentication
-            if (!authenticated)
+            if (!userStat.Authenticated)
             {
                 return retVal;
             }
@@ -205,9 +204,9 @@ namespace ircda.hobbes
             {
                 return retVal;
             } 
-            //should this routine handle adminstrative levels and access keys
-            else if ((confidence.SimpleValue <= SSOConfidence.CompleteConfidence) && 
-                confidence.SimpleValue > SSOConfidence.NoConfidence)
+            //??? should this routine handle adminstrative levels and access keys
+            else if ((userStat.Confidence.SimpleValue <= SSOConfidence.CompleteConfidence) && 
+                userStat.Confidence.SimpleValue > SSOConfidence.NoConfidence)
             {
                 retVal = 1;
             }
@@ -329,7 +328,7 @@ namespace ircda.hobbes
         /// true if user login has expired
         /// </summary>
         /// <returns></returns>
-        public bool Expired()
+        public bool IsExpired()
         {
             bool retVal = true;
 

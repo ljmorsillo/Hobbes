@@ -85,6 +85,16 @@ namespace ircda.hobbes.Tests
             Assert.IsFalse(uut.IsSessionValid(), "Problem: Expired Time Fail");
 
         }
+        UserStatus CreateUserAuthenticatedTestStatus()
+        {
+            SSOConfidence conf = new SSOConfidence();
+
+            System.Web.HttpCookie testCookie = CookieTools.MakeCookie("TestCookie", "TestValue");
+            string tte = CookieTools.NewExpiresTime(1).ToString();
+            testCookie = CookieTools.AddTo(testCookie, CookieTools.SessionExpires, tte);
+            UserStatus uut = new UserStatus("Tester", true, testCookie, conf);
+            return uut;
+        }
         [TestMethod()]
         public void IsInRoleTest()
         {
@@ -113,11 +123,20 @@ namespace ircda.hobbes.Tests
         public void ADAuthenticatorTest()
         {
             ADAuthenticator uut = new ADAuthenticator();
-            Assert.IsNotNull(uut,"Problem: ADAuthenticator not created");
+            Assert.IsNotNull(uut, "Problem: ADAuthenticator not created");
 
             int res = uut.ADAuth("ch185879", "buzzard", "cardio.chboston.org");
             Assert.IsTrue(res > 0, "Problem: ADAuth should be greater than 0");
 
+        }
+
+        [TestMethod()]
+        public void AuthenticateRequestedRoleTest()
+        {
+            UserStatus ustat = CreateUserAuthenticatedTestStatus();
+            UserManager uut = new UserManager();
+            int res = uut.AuthenticateRequestedRole(ustat, "Provider");
+            Assert.AreEqual(0, res, "Problem: Requested role failure");
         }
     }
 }
