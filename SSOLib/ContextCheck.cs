@@ -96,7 +96,7 @@ namespace ircda.hobbes
         ///defining confidence ranges, endpoint expressions and other configurable values
         ///</summary>
         protected List<KeyValuePair<string,string>> ConfigKeys { get; set; }
-        
+        protected string externalSQL= null;        
         ///<summary>datatools object wants this</summary>
         public string provider;
         ///<summary>datatools object wants this</summary>
@@ -112,6 +112,8 @@ namespace ircda.hobbes
                     System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(null);
                 provider = System.Configuration.ConfigurationManager.ConnectionStrings["scamps"].ToString();
                 connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SCAMPs"].ToString();
+                externalSQL = ConfigurationManager.AppSettings.Get("externalSQL");
+
             }
             catch (ConfigurationErrorsException)
             {
@@ -202,7 +204,7 @@ namespace ircda.hobbes
         {
             //TODO read from DB
             //Select "WhitelistEndpoints" from DB
-            string query = "select value from environment where name like '%Whitelist-endpoint'"; //$$$ Remove to external file
+            string query = Tools.ReadBlock(externalSQL, "select.whitelist.endpoints");
             using (var db = new Scamps.DataTools(System.Configuration.ConfigurationManager.ConnectionStrings["SCAMPs"]))
             {
                 db.GetResultSet(query);

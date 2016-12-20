@@ -6,25 +6,28 @@
 -- 2 types of queries listed, the ones with ".tok" in the name use token replacement
 -- other queries should do parameterized queries (i was having problems getting them to work, fix later)
 --[find.user.tok]--
-select USER_NAME from users where USER_NAME = '{0}';
+select username from users where username = '{0}'
 
 --[find.User]--
-select User_Name from users where User_Name = @nametofind
+select username from users where username = @nametofind
 
 --[get.User.Record]-- 
-select * from users where User_Name = @nametofind"
+select * from users where username = @nametofind"
 
 --[find.User.Tok]-- 
-select User_Name from users where User_Name = '{0}';
+select username from users where username = '{0}';
 
 --[get.Hash.]--
-select hash, salt from users where User_Name = @nametofind
+select hash, salt from users where username = @nametofind
 
 --[get.Hash.Tok]-- 
-select * from users where User_Name = '{0}'
+select * from users where username = '{0}'
 
 --[update.User.Hash.Tok] 
-update users set hash = '{0}', salt= '{1} where User_Name = '{2}';
+update users set hash = '{0}', salt= '{1} where username = '{2}';
 
 --[mark.user.tok]--
-update {0} set delete = TRUE, where User_Name = '{1}';
+update {0} set delete = TRUE, where username = '{1}';
+
+--[select.whitelist.endpoints]--
+ select value from environment where name like '%Whitelist-endpoint'

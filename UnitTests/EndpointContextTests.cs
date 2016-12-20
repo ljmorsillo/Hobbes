@@ -42,7 +42,6 @@ namespace ircda.hobbes.Tests
             request = new HttpRequest("", "http://localhost/hobbes/ehr.ajax", "");
             HttpContext testContext = new HttpContext(request, response);
             
-
             confidence = endpointUUT.CheckRequest(testContext, confidence);
             Assert.IsTrue(confidence.SimpleValue == 100);
         }

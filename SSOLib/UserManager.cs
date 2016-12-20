@@ -20,7 +20,7 @@ namespace ircda.hobbes
     public class UserManager
     {
         ///<summary>Column name for username</summary>
-        public static string UsernameCol = "User_Name"; //!!! Use cleverer way to make easily configuarble...
+        public static string UsernameCol = "username"; //!!! Use cleverer way to make easily configuarble...
         ///<summary>Column name hash</summary>
         public static string HashCol = "hash";
         ///<summary>Column name salt</summary>
@@ -41,7 +41,7 @@ namespace ircda.hobbes
         ///<summary>Datatools connection string</summary>
         protected string connectionString;
 
-        //$$$ extern the SQL
+        //actual in hobbes.sql,
         string findUserQuery = "select username from users where username = @nametofind;";
         string getUserRecordQuery = "select * from users where username = @nametofind";
         string findUserQueryTok = "select username from users where username = '{0}';";
