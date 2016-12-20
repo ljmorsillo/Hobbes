@@ -20,7 +20,7 @@ namespace ircda.hobbes
     public class UserManager
     {
         ///<summary>Column name for username</summary>
-        public static string UsernameCol = "username"; //!!! Use cleverer way to make easily configuarble...
+        public static string UsernameCol = "User_Name"; //!!! Use cleverer way to make easily configuarble...
         ///<summary>Column name hash</summary>
         public static string HashCol = "hash";
         ///<summary>Column name salt</summary>
@@ -48,6 +48,8 @@ namespace ircda.hobbes
         string getHashQuery = "select hash, salt from users where username = @nametofind";
         string getHashQueryTok = "select * from users where username = '{0}'";
         string updateUserHashQueryTok = "update users set hash = '{0}', salt= '{1} where username = '{2}'";
+        static string defaultSQLFilename = "hobbes.sql";
+        string externalSQL = defaultSQLFilename;
 
         /// <summary>
         /// Responsible for tasks related to users and the DB, but not the UserStatus per-se
@@ -61,11 +63,13 @@ namespace ircda.hobbes
                     System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(null);
                 provider = System.Configuration.ConfigurationManager.ConnectionStrings["scamps"].ToString();
                 connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SCAMPs"].ToString();
+                externalSQL = ConfigurationManager.AppSettings.Get("externalSQL");
             }
             catch (ConfigurationErrorsException)
             {
                 Console.WriteLine("UserManager: Error reading app settings");
             }
+            //externalSQL = Tools.ReadFile(con.Server.MapPath("\\resources\\data\\scampsweb.sql"));
         }
         /// <summary>
         /// Simply get a user from the localDb
@@ -81,6 +85,8 @@ namespace ircda.hobbes
             dt.ConnectionString = connectionString;
             dt.OpenConnection();
             string[] parameter = {UsernameCol, username};
+
+            findUserQueryTok = Tools.ReadBlock(externalSQL, "find.user.tok");
             //!!! What is wrong with parameterized query?
             //dt.GetResultSet(findUserQuery, parameter);
             dt.GetResultSet(string.Format(findUserQueryTok, username));
@@ -119,6 +125,7 @@ namespace ircda.hobbes
             string[] parameter = { "@username", username };
             //!!! What is wrong with parameterized query?
             //dt.GetResultSet(getUserRecordQuery, parameter);
+            getHashQueryTok = Tools.ReadBlock(externalSQL, "get.Hash.Tok");
             string query = string.Format(getHashQueryTok, username);
             dt.GetResultSet(query);
 
@@ -200,12 +207,16 @@ namespace ircda.hobbes
                 return retVal;
             }
             //check roles in DB against requested role
-            if (!userData["role"].Equals(reqRole))
+            if (!userData.ContainsKey("role"))
             {
                 return retVal;
-            } 
+            }
+            else if (!userData["role"].Equals(reqRole))
+            {
+                return retVal;
+            }
             //??? should this routine handle adminstrative levels and access keys
-            else if ((userStat.Confidence.SimpleValue <= SSOConfidence.CompleteConfidence) && 
+            if ((userStat.Confidence.SimpleValue <= SSOConfidence.CompleteConfidence) &&
                 userStat.Confidence.SimpleValue > SSOConfidence.NoConfidence)
             {
                 retVal = 1;
@@ -235,7 +246,9 @@ namespace ircda.hobbes
             string[] parameter = { UsernameCol, username };
             //!!! What is wrong with parameterized query?
             //dt.GetResultSet(findUserQuery, parameter);
-            dt.GetResultSet(string.Format(findUserQueryTok, username));
+            findUserQueryTok = Tools.ReadBlock(externalSQL, "find.user.tok");
+            findUserQueryTok = string.Format(findUserQueryTok, username);
+            dt.GetResultSet(findUserQueryTok);
             if (dt.rowcount > 0 && noDuplicates)
             {
                 return retval;          //* EXIT
@@ -295,7 +308,7 @@ namespace ircda.hobbes
         /// </summary>
         /// <param name="username"></param>
         /// <returns>records deleted</returns>
-        public int DeleteUser(string username)
+        public int DeleteUserRecord(string username)
         {
             int retval = -1;
             DataTools dt = new DataTools();
@@ -306,6 +319,24 @@ namespace ircda.hobbes
             retval = dt.Delete(UsersTableName, string.Format("{0}='{1}'", UsernameCol, username));
             return retval;
         }
+        /// <summary>
+        /// Delete a user by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns>records deleted</returns>
+        public int MarkUserForDelete(string username)
+        {
+            int retval = -1;
+            DataTools dt = new DataTools();
+            dt.Provider = provider;
+            dt.ConnectionString = connectionString;
+            dt.OpenConnection();
+            string query = Tools.ReadBlock(externalSQL, "mark.user.delete.tok");
+            query = string.Format(query, UsernameCol, username);
+            retval = dt.Execute(query);
+            return retval;
+        }
+
         /// <summary>
         /// Update a user
         /// </summary>

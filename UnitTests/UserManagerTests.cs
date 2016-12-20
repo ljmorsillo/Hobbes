@@ -17,6 +17,7 @@ namespace ircda.hobbes.Tests
         {
             uut = new UserManager();
             Dictionary<string, string> usersfound = uut.GetUser("TestUser");
+
         }
 
         [TestMethod()]
@@ -62,7 +63,7 @@ namespace ircda.hobbes.Tests
         {
             uut = new UserManager();
             int resultCreate = uut.CreateNewUser("TestDelete", "Welcome");
-            int resultDelete = uut.DeleteUser("TestDelete");
+            int resultDelete = uut.DeleteUserRecord("TestDelete");
             Assert.AreEqual(resultCreate, resultDelete, "Problem: create & delete are unequal");
 
         }
