@@ -12,7 +12,7 @@ select username from users where username = '{0}'
 select username from users where username = @nametofind
 
 --[get.User.Record]-- 
-select * from users where username = @nametofind"
+select * from users where username = @nametofind
 
 --[find.User.Tok]-- 
 select username from users where username = '{0}';

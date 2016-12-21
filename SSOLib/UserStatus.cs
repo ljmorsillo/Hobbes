@@ -95,10 +95,14 @@ namespace ircda.hobbes
 
             return retval;
         }
-        ///<summary>Return a dictionary of user data - retruns the db columns and data as key val pairs </summary>
+        ///<summary>Return a dictionary of user data - returns the db columns and cookie data as key val pairs </summary>
         public Dictionary<string,string> UserData()
         {
-            //??? What are error conditions at this point
+            //merge cookie data to it
+            Dictionary<string, string> cookieVals = CookieTools.GetCookieValues(MyCookie);
+            foreach (var kvp in cookieVals)
+                userData[kvp.Key] = kvp.Value;
+            
             return userData;
         }
     }

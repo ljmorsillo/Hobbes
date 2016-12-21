@@ -139,5 +139,11 @@ namespace ircda.hobbes.Tests
             int res = uut.AuthenticateRequestedRole(ustat, "Provider");
             Assert.AreEqual(0, res, "Problem: Requested role failure");
         }
+
+        [TestMethod()]
+        public void UserDataTest()
+        {
+            
+        }
     }
 }
